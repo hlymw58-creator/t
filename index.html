@@ -563,18 +563,13 @@
 
     /* ============================================================ */
     /* ============  مشغل الفيديو المحمي (داخل المنصة)  ============ */
+    /* تصميم خفيف قصداً: بدون تأثيرات blur/shadow تقيلة فوق الفيديو،   */
+    /* وبدون تحميل الفيديو الفعلي (iframe) غير لحظة ما الطالب يدوس تشغيل */
     /* ============================================================ */
-    @keyframes pvBgShift {
-      0%   { background-position: 0% 0%, 0% 0%; }
-      50%  { background-position: 100% 100%, 30px 40px; }
-      100% { background-position: 0% 0%, 0% 0%; }
-    }
-
     .pv-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(5, 19, 14, 0.96);
-      backdrop-filter: blur(8px);
+      background: rgba(5, 19, 14, 0.97);
       z-index: 2000;
       display: none;
       align-items: center;
@@ -585,26 +580,16 @@
 
     .pv-card {
       width: 100%;
-      max-width: 480px;
+      max-width: 100%;
       height: 100dvh;
       max-height: 100dvh;
-      margin: 0 auto;
-      /* نفس روح خلفية منصة الشافعي الصغير المتحركة: تدرّج أخضر غامق + نقاط "نجوم" بتتحرك ببطء */
-      background:
-        radial-gradient(1.5px 1.5px at 15% 20%, rgba(212,175,55,0.55), transparent 60%),
-        radial-gradient(1.5px 1.5px at 80% 15%, rgba(212,175,55,0.4), transparent 60%),
-        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.35), transparent 60%),
-        radial-gradient(1.5px 1.5px at 65% 55%, rgba(212,175,55,0.35), transparent 60%),
-        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.3), transparent 60%),
-        radial-gradient(1.5px 1.5px at 25% 85%, rgba(212,175,55,0.3), transparent 60%),
-        linear-gradient(160deg, #04150d 0%, #0b2b1a 55%, #0e3a22 100%);
-      background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 160% 160%;
-      animation: pvBgShift 22s ease-in-out infinite;
+      margin: 0;
+      background: linear-gradient(160deg, #04150d 0%, #0b2b1a 55%, #0e3a22 100%);
       border: 2px solid #d4af37;
       border-radius: 0;
       padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
       padding-top: calc(10px + env(safe-area-inset-top, 0px));
-      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 25px rgba(212,175,55,0.25);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.5);
       position: relative;
       overflow: hidden;
       display: flex;
@@ -612,11 +597,13 @@
       gap: 8px;
     }
 
-    @media (min-width: 560px) {
+    /* من مقاس التابلت/الكمبيوتر فوق: عرض كامل ومريح للشاشة بدل الشكل الضيق بتاع الموبايل */
+    @media (min-width: 700px) {
       .pv-card {
-        height: min(100dvh, 780px);
-        border-radius: 16px;
+        width: min(94vw, 1100px);
+        height: min(94dvh, 720px);
         margin: auto;
+        border-radius: 16px;
       }
     }
 
@@ -686,7 +673,7 @@
       border-radius: 12px;
       overflow: hidden;
       background: #000;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
       user-select: none;
       -webkit-user-select: none;
       /* الأبعاد الفعلية بتتحدد بالجافاسكريبت (pvFitLayout) عشان الفيديو يتلائم مع أي مقاس شاشة بالظبط بدون ما يزيد عن حجم الصندوق */
@@ -698,7 +685,33 @@
 
     .pv-video-container .plyr__video-embed iframe {
       pointer-events: none !important;
-      transform: scale(1.0) !important;
+    }
+
+    /* واجهة "فاساد" خفيفة: صورة مصغّرة وزرار تشغيل، والفيديو الحقيقي (iframe) ما بيتحملش في الصفحة
+       إلا بعد ما الطالب يدوس عليها فعلياً — ده اللي بيمنع تهنيج الموبايل عند فتح المحاضرة */
+    .pv-facade {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+    }
+    .pv-facade-play {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      border: 2px solid #d4af37;
+      color: #fff;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .pv-support-row {
@@ -742,7 +755,7 @@
       width: 100%;
       height: calc(100% - 50px);
       z-index: 25;
-      display: flex;
+      display: none;
     }
     .pv-touch-zone {
       height: 100%;
@@ -781,12 +794,11 @@
       font-size: 0.55rem !important;
       font-weight: 500;
       pointer-events: none;
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.25);
       padding: 2px 6px;
       border-radius: 8px;
       letter-spacing: 0.2px;
-      backdrop-filter: blur(1px);
-      transition: all 3s ease-in-out;
+      transition: top 1.5s linear, right 1.5s linear;
       border: 1px solid rgba(212,175,55,0.12);
       white-space: nowrap;
     }
@@ -794,8 +806,7 @@
     .pv-attention-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(5, 19, 14, 0.96);
-      backdrop-filter: blur(10px);
+      background: rgba(3, 10, 7, 0.94);
       z-index: 2100;
       display: none;
       align-items: center;
@@ -1011,7 +1022,10 @@
       <div class="pv-title" id="pvLectureTitle">المحاضرة</div>
       <div class="pv-video-wrap" id="pvVideoWrap">
         <div class="pv-video-container" id="pvVideoBox">
-          <div class="pv-touch-overlay">
+          <div class="pv-facade" id="pvFacade" onclick="pvStartPlayback()">
+            <div class="pv-facade-play">▶</div>
+          </div>
+          <div class="pv-touch-overlay" id="pvTouchOverlay">
             <div class="pv-touch-zone pv-seek-right" id="pvZoneRight" title="تقديم 10 ثوانٍ">
               <div class="pv-seek-feedback" id="pvFeedbackRight">+10s</div>
             </div>
@@ -1711,6 +1725,9 @@
     let pvCheckedPoints = new Set();
     let pvCorrectAnswer = 0;
     let pvWatermarkInterval = null;
+    let pvPendingVideoId = null;
+    let pvPendingTitle = "";
+    let pvResizeScheduled = false;
 
     // بيحسب المساحة المتاحة فعلياً حوالين الفيديو (بعد العنوان والأزرار) ويظبط مقاس صندوق
     // الفيديو بالبكسل بحيث يفضل بنسبة 16:9 ومتلائم تماماً مع أي شاشة من غير ما يزيد عنها أو يعمل سكرول
@@ -1732,13 +1749,48 @@
       box.style.height = Math.floor(h) + "px";
     }
 
+    // نأجّل إعادة الحساب لأول فريم متاح فقط، حتى لو الشاشة بتطلق أحداث resize كتير ورا بعض
+    // (زي إخفاء/إظهار شريط عنوان الموبايل)، بدل ما نعيد الحساب في كل مرة وتحصل إعادة رسم مستمرة
+    function pvScheduleFit() {
+      if (pvResizeScheduled) return;
+      pvResizeScheduled = true;
+      requestAnimationFrame(() => {
+        pvResizeScheduled = false;
+        pvFitLayout();
+      });
+    }
+
     window.addEventListener("resize", () => {
-      if (document.getElementById("pvOverlay").classList.contains("active")) pvFitLayout();
-    });
+      if (document.getElementById("pvOverlay").classList.contains("active")) pvScheduleFit();
+    }, { passive: true });
     window.addEventListener("orientationchange", () => {
       if (document.getElementById("pvOverlay").classList.contains("active")) setTimeout(pvFitLayout, 200);
     });
 
+    // بيوقف أي تشغيل حالي وينظّف الفيديو الثقيل من الصفحة (iframe + مؤقتات العلامة المائية)
+    // بدون ما يقفل نافذة المشغل نفسها
+    function pvResetPlayer() {
+      if (pvPlayerInstance) {
+        try { pvPlayerInstance.pause(); } catch (_) {}
+        try { pvPlayerInstance.destroy(); } catch (_) {}
+        pvPlayerInstance = null;
+      }
+      if (pvWatermarkInterval) {
+        clearInterval(pvWatermarkInterval);
+        pvWatermarkInterval = null;
+      }
+      pvCheckPoints = [];
+      pvCheckedPoints = new Set();
+      const oldPlayerDiv = document.getElementById("pvPlayer");
+      if (oldPlayerDiv) {
+        const freshDiv = document.createElement("div");
+        freshDiv.id = "pvPlayer";
+        oldPlayerDiv.replaceWith(freshDiv);
+      }
+    }
+
+    // فتح نافذة المحاضرة: بيعرض بس واجهة خفيفة (صورة مصغّرة + زرار تشغيل)،
+    // من غير ما يحمّل الفيديو المحمي (Plyr/iframe) الثقيل إلا لما الطالب يدوس "تشغيل" فعلياً
     function openProtectedPlayer(youtubeUrl, lectureTitle) {
       const videoId = extractYouTubeId(youtubeUrl);
       if (!videoId) {
@@ -1746,25 +1798,30 @@
         return;
       }
 
-      document.getElementById("pvLectureTitle").innerText = lectureTitle || "المحاضرة";
-      document.getElementById("pvOverlay").classList.add("active");
-      requestAnimationFrame(pvFitLayout);
+      pvResetPlayer();
+      pvPendingVideoId = videoId;
+      pvPendingTitle = lectureTitle || "المحاضرة";
 
-      // إعادة إنشاء عنصر المشغل من جديد في كل مرة لضمان تحميل فيديو مختلف بدون تعارض
+      document.getElementById("pvLectureTitle").innerText = pvPendingTitle;
+      document.getElementById("pvOverlay").classList.add("active");
+
+      const facade = document.getElementById("pvFacade");
+      facade.style.backgroundImage = `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`;
+      facade.style.display = "flex";
+      document.getElementById("pvTouchOverlay").style.display = "none";
+
+      requestAnimationFrame(pvFitLayout);
+    }
+
+    // اللحظة الوحيدة اللي فعلاً بيتحمّل فيها المشغل الثقيل (Plyr + iframe يوتيوب)
+    function pvStartPlayback() {
+      if (!pvPendingVideoId) return;
+      const videoId = pvPendingVideoId;
       const playerHost = document.getElementById("pvVideoBox");
-      let playerDiv = document.getElementById("pvPlayer");
-      const freshDiv = document.createElement("div");
-      freshDiv.id = "pvPlayer";
-      playerDiv.replaceWith(freshDiv);
-      playerDiv = freshDiv;
+      const playerDiv = document.getElementById("pvPlayer");
 
       playerDiv.setAttribute("data-plyr-provider", "youtube");
       playerDiv.setAttribute("data-plyr-embed-id", videoId);
-
-      if (pvPlayerInstance) {
-        try { pvPlayerInstance.destroy(); } catch (_) {}
-        pvPlayerInstance = null;
-      }
 
       pvPlayerInstance = new Plyr(playerDiv, {
         controls: [
@@ -1782,9 +1839,14 @@
           iv_load_policy: 3,
           modestbranding: 1,
           controls: 0,
-          disablekb: 1
+          disablekb: 1,
+          autoplay: 1,
+          playsinline: 1
         }
       });
+
+      document.getElementById("pvFacade").style.display = "none";
+      document.getElementById("pvTouchOverlay").style.display = "flex";
 
       // العلامة المائية باسم ورقم الطالب الحالي
       const watermarkDiv = document.createElement("div");
@@ -1799,7 +1861,6 @@
         pvFitLayout();
       });
 
-      if (pvWatermarkInterval) clearInterval(pvWatermarkInterval);
       const cornerPositions = [
         { top: "8%", right: "5%" },
         { top: "8%", right: "70%" },
@@ -1812,10 +1873,6 @@
         watermarkDiv.style.top = cornerPositions[currentCorner].top;
         watermarkDiv.style.right = cornerPositions[currentCorner].right;
       }, 6000);
-
-      // إعادة ضبط نقاط فحص التركيز لكل محاضرة جديدة
-      pvCheckPoints = [];
-      pvCheckedPoints = new Set();
 
       pvPlayerInstance.on("loadedmetadata", () => {
         const duration = pvPlayerInstance.duration;
@@ -1841,15 +1898,8 @@
     }
 
     function closeProtectedPlayer() {
-      if (pvPlayerInstance) {
-        try { pvPlayerInstance.pause(); } catch (_) {}
-        try { pvPlayerInstance.destroy(); } catch (_) {}
-        pvPlayerInstance = null;
-      }
-      if (pvWatermarkInterval) {
-        clearInterval(pvWatermarkInterval);
-        pvWatermarkInterval = null;
-      }
+      pvResetPlayer();
+      pvPendingVideoId = null;
       document.getElementById("pvOverlay").classList.remove("active");
       document.getElementById("pvAttentionModal").classList.remove("active");
     }
