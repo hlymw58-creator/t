@@ -593,8 +593,8 @@
     .pv-card {
       width: 100%;
       max-width: 100%;
-      height: 100dvh;
-      max-height: 100dvh;
+      height: 100%;
+      max-height: 100%;
       margin: 0;
       background: linear-gradient(160deg, #04150d 0%, #0b2b1a 55%, #0e3a22 100%);
       border: 2px solid #d4af37;
@@ -612,8 +612,9 @@
     /* من مقاس التابلت/الكمبيوتر فوق: عرض كامل ومريح للشاشة بدل الشكل الضيق بتاع الموبايل */
     @media (min-width: 700px) {
       .pv-card {
-        width: min(94vw, 1100px);
-        height: min(94dvh, 720px);
+        width: min(96vw, 1280px);
+        height: min(96vh, 900px);
+        height: min(96dvh, 900px);
         margin: auto;
         border-radius: 16px;
       }
@@ -671,7 +672,7 @@
     }
  
     .pv-video-wrap {
-      flex: 1 1 auto;
+      flex: 1 1 0;
       min-height: 0;
       width: 100%;
       display: flex;
@@ -981,6 +982,42 @@
     .sub-expired { width:100%; text-align:center; font-weight:700; color:#c62828; padding:8px 0; }
     .btn-subscribe { background:#2e7d32; color:#fff; border:0; border-radius:10px; padding:12px; font-weight:700; cursor:pointer; width:100%; font-family:inherit; }
     .btn-subscribe:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* ===== توافق المشغل مع الموبايل والتابلت (أفقي/رأسي) + زرار ملء الشاشة ===== */
+    .pv-overlay { overscroll-behavior: contain; }
+    .pv-full-btn {
+      position: absolute; top: 10px; left: 50px; width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(0,0,0,.55); color: #fff; border: 2px solid #d4af37; font-size: 16px; line-height: 1;
+      cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 0;
+    }
+    .pv-close-btn { z-index: 100; }
+    /* وضع ملء الشاشة: الفيديو ياخد الشاشة كلها والهيدر وأزرار الدعم تختفي */
+    .pv-overlay.pv-full .pv-card { width: 100%; max-width: none; height: 100%; max-height: none; padding: 0; gap: 0; border: 0; border-radius: 0; margin: 0; }
+    .pv-overlay.pv-full .pv-brand, .pv-overlay.pv-full .pv-title, .pv-overlay.pv-full .pv-support-row { display: none; }
+    .pv-overlay.pv-full .pv-video-container { border-radius: 0; box-shadow: none; }
+    .pv-overlay.pv-full .pv-close-btn, .pv-overlay.pv-full .pv-full-btn { top: 6px; width: 28px; height: 28px; font-size: 14px; opacity: .8; }
+    .pv-overlay.pv-full .pv-close-btn { left: 6px; }
+    .pv-overlay.pv-full .pv-full-btn { left: 40px; }
+    /* لو الموبايل رأسي والطالب داس ملء الشاشة ومتصفحه مش بيقفل الاتجاه (زي آيفون): نلف الصندوق 90 درجة ليبقى أفقي */
+    .pv-overlay.pv-rot .pv-card { position: fixed; top: 0; left: 0; margin: 0; max-width: none; max-height: none; transform-origin: 0 0; }
+    /* موبايل أفقي: نخفي الهيدر وأزرار الدعم ونعطي الفيديو أكبر مساحة */
+    @media (orientation: landscape) and (max-height: 520px) {
+      .pv-card { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 4px 8px; gap: 0; border-radius: 0; border-width: 1px; }
+      .pv-brand, .pv-title, .pv-support-row { display: none; }
+      .pv-video-container { border-radius: 6px; }
+      .pv-close-btn, .pv-full-btn { top: 6px; width: 28px; height: 28px; font-size: 14px; opacity: .85; }
+      .pv-close-btn { left: 6px; }
+      .pv-full-btn { left: 40px; }
+    }
+    /* الشاشة رأسية: الفيديو يلتصق بأعلى المنطقة بدل ما يطفو في النص */
+    .pv-hint { display: none; text-align: center; color: #f4e285; font-size: 12px; opacity: .9; padding: 2px 0 6px; flex-shrink: 0; }
+    @media (orientation: portrait) { .pv-video-wrap { align-items: flex-start; padding-top: 4px; } }
+    @media (orientation: portrait) and (max-width: 899px) { .pv-hint { display: block; } }
+    .pv-overlay.pv-full .pv-hint { display: none !important; }
+    /* زرار الدعم العائم يختفي أثناء المشغل (المشغل فيه أزرار دعم خاصة به) حتى لا يغطي الفيديو */
+    body:has(.pv-overlay.active) #supportWidget { display: none !important; }
+    /* موبايل رأسي ضيق: هوامش أصغر ليأخذ الفيديو أقصى عرض */
+    @media (max-width: 699px) and (orientation: portrait) { .pv-card { padding-left: 6px; padding-right: 6px; } }
   </style>
 </head>
 <body>
@@ -1229,6 +1266,7 @@
   <div class="pv-overlay" id="pvOverlay">
     <div class="pv-card">
       <button type="button" class="pv-close-btn" onclick="closeProtectedPlayer()" title="إغلاق">✕</button>
+      <button type="button" class="pv-full-btn" id="pvFullBtn" onclick="pvSetFull(!pvFull)" title="ملء الشاشة">⛶</button>
       <div class="pv-brand">
         <div class="pv-brand-title">منصة الشافعي الصغير</div>
         <div class="pv-brand-sub">إعداد أ. أبو بكر الشافعي</div>
@@ -1251,6 +1289,7 @@
           <div id="pvPlayer"></div>
         </div>
       </div>
+      <div class="pv-hint">💡 لمشاهدة أكبر اضغط زر ⛶ في الأعلى ثم اقلب الجهاز أفقياً</div>
       <div class="pv-support-row">
         <a href="https://wa.me/201099442329" target="_blank" class="pv-support-btn tech">
           🎧 <span>الدعم الفني<span class="pv-phone">01099442329</span></span>
@@ -2320,12 +2359,63 @@
       });
     }
  
-    window.addEventListener("resize", () => {
-      if (document.getElementById("pvOverlay").classList.contains("active")) pvScheduleFit();
-    }, { passive: true });
-    window.addEventListener("orientationchange", () => {
-      if (document.getElementById("pvOverlay").classList.contains("active")) setTimeout(pvFitLayout, 200);
-    });
+    // ===== ملء الشاشة + الاتجاه الأفقي (موبايل / تابلت / كمبيوتر) =====
+    let pvFull = false, pvUsedNative = false;
+    const pvFsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+    const pvIsOpen = () => document.getElementById("pvOverlay").classList.contains("active");
+
+    // لو الشاشة رأسية وفي وضع ملء الشاشة: نلف الكارت 90° فيظهر الفيديو أفقياً بالمقاس الكامل
+    function pvApplyOrientation() {
+      const ov = document.getElementById("pvOverlay");
+      const card = ov.querySelector(".pv-card");
+      const w = window.innerWidth, h = window.innerHeight;
+      const rot = pvFull && h > w;
+      ov.classList.toggle("pv-rot", rot);
+      if (rot) {
+        card.style.width = h + "px";
+        card.style.height = w + "px";
+        card.style.transform = "translateX(" + w + "px) rotate(90deg)";
+      } else {
+        card.style.width = ""; card.style.height = ""; card.style.transform = "";
+      }
+      requestAnimationFrame(pvFitLayout);
+    }
+    function pvLockLandscape() {
+      try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {}); } catch (_) {}
+    }
+    function pvSetFull(on) {
+      pvFull = !!on;
+      const ov = document.getElementById("pvOverlay");
+      ov.classList.toggle("pv-full", pvFull);
+      const btn = document.getElementById("pvFullBtn");
+      if (btn) { btn.textContent = pvFull ? "🗗" : "⛶"; btn.title = pvFull ? "تصغير" : "ملء الشاشة"; }
+      if (pvFull) {
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (req && !pvFsEl()) {
+          try {
+            const pr = req.call(el);
+            if (pr && pr.then) pr.then(() => { pvUsedNative = true; pvLockLandscape(); }).catch(() => {});
+            else { pvUsedNative = true; pvLockLandscape(); }
+          } catch (_) {}
+        }
+      } else {
+        try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (_) {}
+        if (pvFsEl()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (_) {} }
+        pvUsedNative = false;
+      }
+      pvApplyOrientation();
+      setTimeout(pvApplyOrientation, 300);
+    }
+    function pvOnViewportChange() { if (pvIsOpen()) pvApplyOrientation(); }
+    window.addEventListener("resize", pvOnViewportChange, { passive: true });
+    window.addEventListener("orientationchange", () => { setTimeout(pvOnViewportChange, 120); setTimeout(pvOnViewportChange, 450); });
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", pvOnViewportChange);
+    if (window.ResizeObserver) { try { new ResizeObserver(() => { if (pvIsOpen()) pvScheduleFit(); }).observe(document.getElementById("pvVideoWrap")); } catch (_) {} }
+    ["fullscreenchange", "webkitfullscreenchange"].forEach((ev) => document.addEventListener(ev, () => {
+      if (pvFull && pvUsedNative && !pvFsEl()) pvSetFull(false); // الطالب خرج من ملء الشاشة بزرار الرجوع/Esc
+      else pvOnViewportChange();
+    }));
  
     // بيوقف أي تشغيل حالي وينظّف الفيديو الثقيل من الصفحة (iframe + مؤقتات العلامة المائية)
     // بدون ما يقفل نافذة المشغل نفسها
@@ -2496,6 +2586,7 @@
     }
  
     function closeProtectedPlayer() {
+      pvSetFull(false);
       pvResetPlayer();
       pvPendingVideoId = null; pvPendingDriveId = null;
       document.getElementById("pvOverlay").classList.remove("active");
@@ -2504,6 +2595,7 @@
  
     function pvTriggerAttentionCheck() {
       if (pvPlayerInstance) pvPlayerInstance.pause();
+      if (document.getElementById("pvOverlay").classList.contains("pv-rot")) pvSetFull(false); // نافذة السؤال رأسية
       pvGenerateQuestion();
       document.getElementById("pvAttentionModal").classList.add("active");
     }
