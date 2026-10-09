@@ -3781,8 +3781,10 @@
       examState = null; const el = document.getElementById("examModal"); if (el) el.style.display = "none";
     }
     const examBtns = (retry, fn) => (retry ? `<button class="btn-submit" type="button" onclick="${fn}">🔄 إعادة المحاولة</button>` : "") + '<button class="btn-submit" type="button" style="background:#757575" onclick="examClose(true)">إغلاق</button>';
-    function examError(msg, fn) {
-      examEl().innerHTML = `<h3 class="modal-title">📝 الواجب</h3><p class="ex-note">${escapeHtml(msg || "تعذر الاتصال الآن. تأكد من الإنترنت وحاول مرة أخرى.")}</p>${examBtns(true, fn)}`;
+    function examError(msg, fn, dbg) {
+      // يظهر الرابط الذي أرسلته المنصة للسكربت لتسهيل كشف الخطأ (هو نفس رابط زر الواجب الظاهر في الصفحة أصلاً)
+      const adm = dbg ? `<p class="ex-note" dir="ltr" style="font-size:11px;word-break:break-all;color:#888">${escapeHtml(dbg)}</p>` : "";
+      examEl().innerHTML = `<h3 class="modal-title">📝 الواجب</h3><p class="ex-note">${escapeHtml(msg || "تعذر الاتصال الآن. تأكد من الإنترنت وحاول مرة أخرى.")}</p>${adm}${examBtns(true, fn)}`;
     }
 
     function examOpen(id) {
@@ -3796,7 +3798,7 @@
       examEl().innerHTML = '<p class="ex-note">⏳ جاري تحميل الامتحان...</p>';
       const r = await callWithRetry(EXAM_SCRIPT_URL, { action: "examStart", phone: currentStudent.phone, lectureId: s.id, formUrl: s.url }, 3);
       if (examState !== s) return;
-      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "", "examLoad()"); return; }
+      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "", "examLoad()", s.url); return; }
       const d = r.data; s.info = d; examSetFirst(s.id, d.first);
       if (d.locked) { examShowResult(d, false); return; }
       s.qs = d.questions || []; examShowIntro();
