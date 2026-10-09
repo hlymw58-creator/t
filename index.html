@@ -1961,7 +1961,7 @@
       { id: "tf3", title: "المحاضرة الثالثة: التفسير", link: "https://www.youtube.com/watch?v=hpxX6vURHl4&list=PLKAsdarL8ueg&index=3&pp=iAQB", homeworkLink: "https://forms.gle/XtFe2kFHJjLNgYy3A" },
       { id: "tf4", title: "المحاضرة الرابعة: التفسير", link: "https://drive.google.com/file/d/1ybVBfpGwWhA5LbLtcptzduZwuipxECEl/view?usp=drive_link", homeworkLink: "https://forms.gle/thWPjEB9Geg3fhD99" },
       { id: "tf5", title: "المحاضرة الخامسة: التفسير", link: "https://drive.google.com/file/d/1OOIoWtn-K1oIcI6I36jJS90EoRH1Aa82/view?usp=drive_link", homeworkLink: "https://forms.gle/YAQCB8V9FEMeE5BT6" },
-      { id: "tf6", title: "المحاضرة السادسة: التفسير", link: "https://drive.google.com/file/d/1tBOW4BSmxEGvgSCbEmcvWOF40ENRmxBV/view?usp=drive_link", homeworkLink: "https://docs.google.com/forms/d/16z53vS1Y84g9PAn7SbZXtx1NQOT_HDqxM0vCqRJc8xA/edit" },
+      { id: "tf6", title: "المحاضرة السادسة: التفسير", link: "https://drive.google.com/file/d/1tBOW4BSmxEGvgSCbEmcvWOF40ENRmxBV/view?usp=drive_link", homeworkLink: "" },
       { id: "tf7", title: "المحاضرة السابعة: التفسير", link: "https://www.youtube.com/watch?v=EwEPrCPcO6M", homeworkLink: "" },
       { id: "tf8", title: "المحاضرة الثامنة: التفسير", link: "https://youtu.be/TfN6ayYwLfI?si=l_HWGnAbsHeupGQV", homeworkLink: "" }
     ];
@@ -3783,7 +3783,7 @@
     const examBtns = (retry, fn) => (retry ? `<button class="btn-submit" type="button" onclick="${fn}">🔄 إعادة المحاولة</button>` : "") + '<button class="btn-submit" type="button" style="background:#757575" onclick="examClose(true)">إغلاق</button>';
     function examError(msg, fn, dbg) {
       // يظهر الرابط الذي أرسلته المنصة للسكربت لتسهيل كشف الخطأ (هو نفس رابط زر الواجب الظاهر في الصفحة أصلاً)
-      const adm = dbg ? `<p class="ex-note" dir="ltr" style="font-size:11px;word-break:break-all;color:#888">${escapeHtml(dbg)}</p>` : "";
+      const adm = dbg ? `<p class="ex-note" dir="ltr" style="font-size:11px;word-break:break-all;white-space:pre-wrap;color:#888">${escapeHtml(dbg)}</p>` : "";
       examEl().innerHTML = `<h3 class="modal-title">📝 الواجب</h3><p class="ex-note">${escapeHtml(msg || "تعذر الاتصال الآن. تأكد من الإنترنت وحاول مرة أخرى.")}</p>${adm}${examBtns(true, fn)}`;
     }
 
@@ -3798,7 +3798,7 @@
       examEl().innerHTML = '<p class="ex-note">⏳ جاري تحميل الامتحان...</p>';
       const r = await callWithRetry(EXAM_SCRIPT_URL, { action: "examStart", phone: currentStudent.phone, lectureId: s.id, formUrl: s.url }, 3);
       if (examState !== s) return;
-      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "", "examLoad()", s.url); return; }
+      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "", "examLoad()", s.url + (r.data && r.data.detail ? "\n" + r.data.detail : "")); return; }
       const d = r.data; s.info = d; examSetFirst(s.id, d.first);
       if (d.locked) { examShowResult(d, false); return; }
       s.qs = d.questions || []; examShowIntro();
