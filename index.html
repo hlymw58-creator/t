@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <!-- كود إثبات ملكية جوجل الخاص بك -->
   <meta name="google-site-verification" content="P6w0eE5r-E6qtThUBP6ESmQifa7jndXKVhY5QRpQVNU" />
 
@@ -978,6 +978,10 @@
     .lecture-card { content-visibility: auto; contain-intrinsic-size: 1px 220px; }
     .pv-video-container video { pointer-events: none; }
     .pv-video-container .plyr__controls { pointer-events: auto; }
+    .pv-yt-cover { position:absolute; inset:0; z-index:2; display:none; align-items:center; justify-content:center; text-align:center; padding:18px;
+      color:#f4e285; font-weight:700; font-size:clamp(13px,3.2vw,18px); line-height:1.9; pointer-events:none;
+      background:linear-gradient(rgba(5,26,12,.93),rgba(5,26,12,.93)), var(--pv-thumb) center/cover #000; }
+    .pv-yt-cover.show { display:flex; animation:fadeUp .25s ease both; }
     .pv-drive-frame { position:absolute; inset:0; width:100%; height:100%; border:0; background:#000; z-index:1; }
     .pv-drive-shield { position:absolute; top:0; right:0; left:0; width:auto; height:clamp(44px,9%,64px); z-index:3; background:transparent; }
     .sub-timer { width:100%; text-align:center; font-weight:700; font-size:.9rem; color:#2e7d32; direction:rtl; }
@@ -1072,6 +1076,24 @@
       display:flex;gap:10px;align-items:center;background:#14532d;color:#fff;border:1px solid #f9a825;border-radius:14px;padding:12px 16px;font-size:14px;line-height:1.6;
       box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .45s cubic-bezier(.2,.9,.3,1.2),opacity .35s;cursor:pointer}
     .notif-toast.show{transform:translate(-50%,0);opacity:1}.notif-toast .ni-ico{font-size:24px}
+    /* ---- الامتحان من جوجل فورم ---- */
+    .ex-box{max-width:560px;text-align:right}
+    .ex-count{font-size:13px;color:#666;text-align:center}
+    .ex-bar{height:8px;background:#e0e0e0;border-radius:6px;overflow:hidden;margin:10px 0 16px}
+    .ex-bar i{display:block;height:100%;background:linear-gradient(90deg,#2e7d32,#f9a825);transition:width .3s}
+    .ex-q{font-size:18px;font-weight:bold;line-height:1.8;margin:8px 0 14px;color:#1b5e20;white-space:pre-wrap}
+    .ex-help{font-size:13px;color:#666;margin:-6px 0 12px;white-space:pre-wrap}
+    .ex-opt{display:flex;gap:10px;align-items:center;padding:12px 14px;border:2px solid #cfd8dc;border-radius:12px;margin-bottom:10px;cursor:pointer;line-height:1.6;background:#fff;color:#222}
+    .ex-opt.sel{border-color:#2e7d32;background:#e8f5e9}
+    .ex-dot{width:20px;height:20px;border:2px solid #90a4ae;border-radius:50%;flex:none}
+    .ex-opt.chk .ex-dot{border-radius:5px}
+    .ex-opt.sel .ex-dot{background:#2e7d32;border-color:#2e7d32;box-shadow:inset 0 0 0 3px #fff}
+    .ex-text{width:100%;padding:12px;border:2px solid #cfd8dc;border-radius:12px;font:inherit;margin-bottom:12px;background:#fff;color:#222}
+    .ex-score{font-size:42px;font-weight:bold;text-align:center;color:#2e7d32;margin:10px 0}
+    .ex-note{text-align:center;color:#555;line-height:1.9;font-size:14px;margin:8px 0}
+    .ex-rev-h{font-weight:bold;color:#1b5e20;margin:14px 0 8px;text-align:center}
+    .ex-rev{border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px;line-height:1.8;color:#222;border:1px solid}
+    .ex-rev.ok{background:#e8f5e9;border-color:#a5d6a7}.ex-rev.bad{background:#ffebee;border-color:#ef9a9a}
 
     /* ===== صفحة الحساب: بطاقات الإحصاء + الصورة ===== */
     .acc-pic{transition:transform .3s cubic-bezier(.2,.9,.3,1.3),box-shadow .3s}
@@ -1091,34 +1113,214 @@
     .lecture-card:hover{box-shadow:0 8px 20px rgba(0,0,0,.15)}
     @media (prefers-reduced-motion: reduce){.subject-card,.stat-card,.notif-item.new,.acc-pic{animation:none!important;transition:none!important}}
     @media (max-width:560px){.subject-grid{grid-template-columns:1fr}.subject-banner{min-height:150px}}
+
+    /* ============================================================
+       [NEW v3] 3D tactile buttons + micro-interactions
+       ============================================================ */
+    .btn-3d{position:relative;transform:translateY(0);
+      box-shadow:0 4px 0 rgba(0,0,0,.28),0 6px 14px rgba(0,0,0,.20);
+      transition:transform .13s cubic-bezier(.34,1.2,.64,1),box-shadow .13s ease,filter .18s ease;}
+    .btn-3d:hover{transform:translateY(-3px);
+      box-shadow:0 7px 0 rgba(0,0,0,.24),0 12px 22px rgba(0,0,0,.24),0 0 18px rgba(255,179,0,.28);
+      filter:brightness(1.05);}
+    .btn-3d:active{transform:translateY(3px);
+      box-shadow:0 1px 0 rgba(0,0,0,.32),0 2px 5px rgba(0,0,0,.22);
+      filter:brightness(.96);}
+    .btn-3d:active::after{content:"";position:absolute;inset:0;border-radius:inherit;
+      background:radial-gradient(circle at 50% 120%,rgba(255,255,255,.25),transparent 60%);}
+    .btn-3d-glow{overflow:hidden;}
+    .btn-3d-glow::before{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
+      transform:skewX(-20deg);transition:left .5s ease;pointer-events:none;}
+    .btn-3d-glow:hover::before{left:130%;}
+    /* تطبيق التأثير على الأزرار الموجودة دون تغيير بنيتها */
+    .btn-submit,.btn-open-lecture,.btn-homework,.btn-subscribe,.btn-activate-code,
+    .btn-admin,.btn-logout,.btn-confirm-attendance,.acc-back,.sub-btn,
+    .support-main-btn,.icon-btn,.la-close,.mini-btn,.pv-close-btn,.pv-full-btn{transform:translateY(0);
+      box-shadow:0 3px 0 rgba(0,0,0,.26),0 5px 12px rgba(0,0,0,.16);
+      transition:transform .13s cubic-bezier(.34,1.2,.64,1),box-shadow .13s ease,filter .18s ease;}
+    .btn-submit:hover,.btn-open-lecture:hover,.btn-homework:hover,.btn-subscribe:hover,.btn-activate-code:hover,
+    .btn-admin:hover,.btn-confirm-attendance:hover,.acc-back:hover,.sub-btn:hover,
+    .support-main-btn:hover,.icon-btn:hover{transform:translateY(-3px);
+      box-shadow:0 6px 0 rgba(0,0,0,.22),0 10px 20px rgba(0,0,0,.22),0 0 16px rgba(255,179,0,.25);
+      filter:brightness(1.05);}
+    .btn-submit:active,.btn-open-lecture:active,.btn-homework:active,.btn-subscribe:active,.btn-activate-code:active,
+    .btn-admin:active,.btn-logout:active,.btn-confirm-attendance:active,.acc-back:active,.sub-btn:active,
+    .support-main-btn:active,.icon-btn:active,.la-close:active,.mini-btn:active{transform:translateY(2px);
+      box-shadow:0 1px 0 rgba(0,0,0,.30),0 2px 5px rgba(0,0,0,.20);filter:brightness(.96);}
+    .btn-confirm-attendance:disabled,.btn-submit:disabled,.btn-subscribe:disabled{transform:none;
+      box-shadow:0 2px 0 rgba(0,0,0,.12);filter:none;cursor:not-allowed;}
+    .tab-btn{transform:translateY(0);box-shadow:0 2px 0 rgba(0,0,0,.10);
+      transition:transform .13s ease,box-shadow .13s ease,color .2s;}
+    .tab-btn:hover{transform:translateY(-2px);}
+    .tab-btn:active{transform:translateY(2px);box-shadow:none;}
+
+    /* ============================================================
+       [NEW v3] Weekly Schedule Module (جدولي الأسبوعي)
+       ============================================================ */
+    .sched-wrap{display:flex;flex-direction:column;gap:16px;}
+    .sched-hero{background:linear-gradient(135deg,#0d3b12,#1b5e20 60%,#2e7d32);color:#fff;border-radius:16px;
+      padding:22px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+      box-shadow:0 8px 24px rgba(0,0,0,.25);position:relative;overflow:hidden;}
+    .sched-hero::after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;
+      background:rgba(255,255,255,.07);top:-70px;left:-50px;}
+    .sched-hero h3{font-size:20px;position:relative;z-index:1;}
+    .sched-hero p{opacity:.9;font-size:13px;margin-top:4px;position:relative;z-index:1;}
+    .sched-hero-actions{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1;}
+    .sched-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--card-bg);
+      border:1px solid var(--border-color);border-radius:14px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,.10);}
+    .sched-title-input{flex:1;min-width:180px;padding:11px 14px;border:2px solid var(--border-color);border-radius:10px;
+      font-size:15px;font-weight:700;background:transparent;color:var(--text-color);outline:none;
+      transition:border-color .2s,box-shadow .2s;}
+    .sched-title-input:focus{border-color:#2e7d32;box-shadow:0 0 0 4px rgba(46,125,50,.15);}
+    .sched-days{display:flex;flex-direction:column;gap:16px;}
+    .sched-day{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:14px;
+      box-shadow:0 6px 20px rgba(0,0,0,.10);display:flex;flex-direction:column;gap:8px;}
+    .sched-day.today{border:2px solid #ffb300;box-shadow:0 0 0 4px rgba(255,179,0,.15),0 8px 24px rgba(0,0,0,.14);}
+    .sched-day-head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border-color);
+      padding-bottom:8px;}
+    .sched-day-name{font-weight:800;font-size:16px;color:var(--primary-color);display:flex;align-items:center;gap:8px;}
+    .sched-today-badge{font-size:11px;background:#ffb300;color:#333;border-radius:12px;padding:2px 10px;font-weight:800;}
+    .sched-progress{font-size:12px;font-weight:700;color:#666;}
+    .sched-day-complete{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--success-color);
+      background:var(--success-bg);border-radius:8px;padding:6px 10px;}
+    .sched-entry{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;
+      background:rgba(0,0,0,.03);border:1px solid var(--border-color);animation:fadeUp .3s ease;}
+    .sched-entry.done{opacity:.75;background:var(--success-bg);border-color:transparent;}
+    .sched-entry.done .sched-name{text-decoration:line-through;}
+    .sched-check{width:21px;height:21px;cursor:pointer;flex:none;accent-color:#2e7d32;}
+    .sched-entry-main{flex:1;min-width:0;}
+    .sched-name{font-weight:700;font-size:14px;}
+    .sched-lesson{font-size:12px;color:#888;margin-top:2px;}
+    .sched-done-at{font-size:11px;color:var(--success-color);font-weight:700;margin-top:3px;}
+    .sched-time{font-size:12px;font-weight:800;background:var(--primary-color);color:#fff;border-radius:12px;
+      padding:3px 9px;flex:none;direction:ltr;}
+    .sched-entry-tools{display:flex;gap:4px;flex:none;}
+    .mini-btn{width:27px;height:27px;border-radius:8px;border:none;background:rgba(0,0,0,.08);color:inherit;
+      cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;
+      box-shadow:0 2px 0 rgba(0,0,0,.15);transition:transform .12s,background .15s;}
+    .mini-btn:hover{background:rgba(0,0,0,.16);transform:translateY(-1px);}
+    .mini-btn:active{transform:translateY(2px);box-shadow:none;}
+    .mini-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+    .sched-add{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:8px;margin-top:6px;align-items:stretch;}
+    .sched-add .sched-add-btn{grid-column:auto!important;padding:10px 18px!important;white-space:nowrap;}
+    @media (max-width:640px){
+      .sched-add{grid-template-columns:1fr 110px;}
+      .sched-add .sched-add-btn{grid-column:1/-1!important;}
+    }
+    .sched-add input{padding:9px 10px;border:1px solid var(--border-color);border-radius:8px;font-size:13px;
+      background:transparent;color:inherit;outline:none;}
+    .sched-add input:focus{border-color:#2e7d32;}
+    .sched-add .full{grid-column:auto;}
+    @media (max-width:640px){.sched-add .full{grid-column:1/-1;}}
+    [data-theme="dark"] .sched-entry{background:rgba(255,255,255,.04);}
+    [data-theme="dark"] .mini-btn{background:rgba(255,255,255,.10);}
+    /* أزرار الإجراءات الكبيرة أسفل الصفحة */
+    .sched-bottom{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px;}
+    .sched-big-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:104px;
+      padding:18px 12px;border:none;border-radius:18px;color:#fff;font-family:inherit;font-size:20px;font-weight:800;cursor:pointer;
+      box-shadow:0 6px 0 rgba(0,0,0,.22),0 12px 24px rgba(0,0,0,.18);}
+    .sched-big-btn .sb-ico{font-size:38px;line-height:1;}
+    .sched-big-btn small{font-size:12px;font-weight:600;opacity:.9;}
+    .sched-big-btn:focus-visible{outline:4px solid #ffb300;outline-offset:3px;}
+    .sched-big-btn.pdf{background:linear-gradient(135deg,#0b3d5c,#1a73e8);}
+    .sched-big-btn.logs{background:linear-gradient(135deg,#0d3b12,#2e7d32);}
+    .sched-big-btn.fresh{background:linear-gradient(135deg,#b26a00,#ffb300);color:#2b2000;}
+    @media (max-width:640px){
+      .sched-bottom{grid-template-columns:1fr;}
+      .sched-big-btn{flex-direction:row;min-height:72px;gap:14px;font-size:19px;}
+      .sched-big-btn .sb-ico{font-size:32px;}
+      .sched-big-btn small{display:none;}
+    }
+    /* بطاقة الجدول في شبكة المواد */
+    .sched-card-banner{background:linear-gradient(135deg,#1a237e,#3949ab)!important;}
+
+    /* نافذة سجلات الجداول */
+    .arch-ver{border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+    .arch-ver summary{cursor:pointer;font-weight:700;color:var(--primary-color);font-size:14px;}
+    .arch-ver .arch-body{margin-top:8px;font-size:13px;line-height:1.9;}
+
+    /* شريط التذكير الذكي بالمهمة التالية */
+    #schedPrompt{position:fixed;bottom:96px;left:50%;transform:translate(-50%,20px);z-index:4500;
+      max-width:min(460px,calc(100vw - 24px));background:linear-gradient(135deg,#0d3b12,#1b5e20);color:#fff;
+      border:2px solid #ffb300;border-radius:16px;padding:13px 16px;font-size:14px;font-weight:700;line-height:1.7;
+      box-shadow:0 10px 30px rgba(0,0,0,.4);display:none;gap:10px;align-items:center;
+      transition:transform .4s cubic-bezier(.2,.9,.3,1.2),opacity .3s;opacity:0;cursor:pointer;}
+    #schedPrompt.show{display:flex;transform:translate(-50%,0);opacity:1;animation:popIn .35s;}
+    #schedPrompt .sp-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:26px;height:26px;
+      cursor:pointer;flex:none;font-size:13px;}
+
+    /* ============================================================
+       [NEW v3] PDF / Print layout for schedule export
+       ============================================================ */
+    #printArea{display:none;}
+    @media print{
+      @page{size:A4;margin:12mm;}
+      body>*:not(#printArea){display:none!important;}
+      body::before{display:none!important;}
+      #printArea{display:block!important;direction:rtl;color:#000;background:#fff;
+        font-family:'Segoe UI',Tahoma,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .pr-head{display:flex;align-items:center;gap:10px;font-size:20pt;
+        border-bottom:3px solid #1b5e20;padding-bottom:8px;margin-bottom:14px;}
+      .pr-head img{height:1.3em;width:1.3em;object-fit:cover;border-radius:50%;border:2px solid #d4af37;}
+      .pr-brand{font-weight:800;color:#1b5e20;font-size:1em;line-height:1.2;}
+      .pr-title{font-size:.55em;color:#444;font-weight:600;}
+      .pr-meta{font-size:.45em;color:#666;margin-bottom:10px;}
+      .pr-table{width:100%;border-collapse:collapse;font-size:10.5pt;margin-bottom:10px;}
+      .pr-table th{background:#e8f5e9!important;color:#1b5e20;border:1px solid #9e9e9e;padding:6px 8px;text-align:right;}
+      .pr-table td{border:1px solid #bdbdbd;padding:6px 8px;text-align:right;}
+      .pr-day-row td{background:#f1f8e9!important;font-weight:800;color:#1b5e20;font-size:11pt;}
+      .pr-done{color:#2e7d32;font-weight:800;}
+      .pr-pending{color:#9e9e9e;}
+      .pr-foot{margin-top:14px;font-size:8.5pt;color:#777;text-align:center;border-top:1px solid #ccc;padding-top:8px;}
+    }
+
+
+    /* =====================================================================
+       طبقة التجاوب (Responsive layer) — مضافة فوق التصميم الحالي بدون تغيير الوظائف
+       Mobile: حتى 767px | Tablet: 768–1023px | Desktop: 1024px+ (الأساس)
+       ===================================================================== */
+    html { width: 100%; overflow-x: hidden; }
+    /* clip بدل hidden على body عشان الهيدر الـ sticky يفضل شغال */
+    body { width: 100%; max-width: 100%; overflow-x: clip; line-height: 1.7; }
+    img, video, iframe, canvas, svg { max-width: 100%; }
+    h1, h2, h3, h4 { line-height: 1.4; margin-bottom: 1.2rem; }
+    p, li, .brand-title, .subject-body, .notif-item { overflow-wrap: anywhere; }
+    .container, .header-container, .ft-inner { margin-left: auto; margin-right: auto; }
+    .header-container { justify-content: center; text-align: center; }
+    .user-info, .hdr-actions { flex-wrap: wrap; justify-content: center; }
+    .courses-grid, .subject-grid { gap: 24px; }
+
+    /* Desktop (الأساس) */
+    @media (min-width: 1024px) {
+      .container, .header-container, .ft-inner { max-width: 1280px; padding-left: 20px; padding-right: 20px; }
+      #accountPage { max-width: 760px; }
+      .courses-grid, .subject-grid { gap: 32px; }
+      .container { margin-top: 40px; margin-bottom: 40px; }
+    }
+    @media (min-width: 1440px) {
+      html { font-size: 106.25%; }
+    }
+
+    /* Tablet */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .container, .header-container, .ft-inner { max-width: 960px; padding-left: 24px; padding-right: 24px; }
+      .courses-grid, .subject-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    }
+
+    /* Mobile */
+    @media (max-width: 767px) {
+      .header-container { flex-direction: column; align-items: center; gap: 16px; padding-left: 16px; padding-right: 16px; }
+      .brand-title { justify-content: center; font-size: 1.25rem; }
+      .user-info { width: 100%; max-width: 100%; gap: 12px; }
+      .container { padding-left: 16px; padding-right: 16px; margin-top: 20px; }
+      .courses-grid, .subject-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+      .sched-bottom { gap: 16px; }
+      .tab-btn { padding: 12px 18px; }
+    }
   </style>
 <base target="_blank">
-<link rel="preconnect" href="https://www.youtube-nocookie.com"><link rel="preconnect" href="https://drive.usercontent.google.com"><link rel="dns-prefetch" href="https://cdn.plyr.io">
-<style>
-/* ===== أزرار 3D + حركات ===== */
-.btn-homework,.pv-support-btn{position:relative;transition:transform .12s,box-shadow .12s,filter .2s;transform:translateY(0);border:0;border-radius:14px;
- background:linear-gradient(180deg,#ffe58a,#e0a82e);color:#3a2a00!important;font-weight:800;text-decoration:none;
- box-shadow:0 6px 0 #9a6f10,0 12px 18px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.55)}
-.pv-support-btn.tech{background:linear-gradient(180deg,#5fe0a0,#1e9e62);color:#04301c!important;box-shadow:0 6px 0 #0f6b40,0 12px 18px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.45)}
-.pv-support-btn.academic{background:linear-gradient(180deg,#7ab8ff,#2f6fd0);color:#fff!important;box-shadow:0 6px 0 #1b478f,0 12px 18px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.4)}
-.btn-homework:hover,.pv-support-btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
-.btn-homework:active,.pv-support-btn:active{transform:translateY(5px);box-shadow:0 1px 0 #9a6f10,0 3px 6px rgba(0,0,0,.4)}
-.pv-overlay.active .pv-card{animation:pvIn .45s cubic-bezier(.2,.9,.3,1.2)}
-@keyframes pvIn{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
-.pv-prog{flex-shrink:0;padding:6px 10px 2px;color:#f4e285;font-size:12.5px;text-align:center}
-.pv-prog-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.4);margin-bottom:5px}
-.pv-prog-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#5fe0a0,#f4e285);transition:width .6s ease}
-.pv-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-120px);z-index:100000;background:#0f3d2a;color:#f4e285;padding:12px 20px;border-radius:14px;
- border:1px solid #f4e285;box-shadow:0 8px 0 #07271a,0 14px 24px rgba(0,0,0,.4);transition:transform .5s cubic-bezier(.2,1.4,.4,1);font-weight:700;max-width:92vw;text-align:center}
-.pv-toast.show{transform:translate(-50%,0)}
-.pv-overlay.pv-full .pv-prog{display:none}
-.plyr__poster,.plyr--youtube .plyr__poster{display:none!important}
-.pv-video-container iframe{pointer-events:none!important}
-.pv-video-container{background:#000}
-.pv-loading{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#f4e285;font-weight:700;pointer-events:none}
-.pv-loading i{width:44px;height:44px;border:4px solid rgba(244,226,133,.25);border-top-color:#f4e285;border-radius:50%;animation:pvSp 1s linear infinite}
-@keyframes pvSp{to{transform:rotate(360deg)}}
-</style>
+<base target="_blank">
 </head>
 <body>
  
@@ -1144,7 +1346,7 @@
           <div class="dropdown" id="profileMenu"><button onclick="openAccount()">👤 الحساب</button><button onclick="logout()" style="color:#c62828">🚪 تسجيل الخروج</button></div>
         </div>
         <button class="btn-admin" id="adminBtn" style="display:none" onclick="openAdminPanel()">⚙️ لوحة التحكم</button>
-        <button class="btn-activate-code" onclick="openCodeModal()">🔑 تفعيل كود</button>
+                <button class="btn-activate-code" onclick="openCodeModal()">🔑 تفعيل كود</button>
       </div>
     </div>
   </header>
@@ -1190,6 +1392,11 @@
       <div id="revTafseer" class="sub-content"><div id="revTafseerContainer"></div></div>
       <div id="revHadith" class="sub-content"><div id="revHadithContainer"></div></div>
       <div id="revFiqh" class="sub-content"><div id="revFiqhContainer"></div></div>
+    </div>
+
+    <div id="scheduleTab" class="tab-content">
+      <h2 class="section-title">جدولي الأسبوعي</h2>
+      <div id="scheduleContainer"></div>
     </div>
 
     <div id="forumTab" class="tab-content">
@@ -1387,7 +1594,6 @@
           <div id="pvPlayer"></div>
         </div>
       </div>
-      <div class="pv-prog" id="pvProg"><div class="pv-prog-bar"><div class="pv-prog-fill" id="pvProgFill"></div></div><span id="pvProgTxt"></span></div>
       <div class="pv-hint">💡 لمشاهدة أكبر اضغط زر ⛶ في الأعلى ثم اقلب الجهاز أفقياً</div>
       <div class="pv-support-row">
         <a href="https://wa.me/201099442329" target="_blank" class="pv-support-btn tech">
@@ -1605,7 +1811,7 @@
     // محاولة واحدة: ok (نجاح مؤكد) | fail (رد قاطع من السيرفر) | transient (لا نتيجة موثوقة)
     async function callScript(url, payload) {
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
+      const timer = setTimeout(() => ctrl.abort(), payload && payload.action === "uploadPdf" ? 90000 : REQUEST_TIMEOUT_MS); // رفع الـ PDF يحتاج وقتاً أطول
       try {
         const res = await fetch(url, {
           method: "POST",
@@ -1750,14 +1956,14 @@
     ];
  
     const tafseerLectures = [
-      { id: "tf1", title: "المحاضرة الأولى: التفسير", link: "https://drive.google.com/file/d/139CDLmXSSNs4GUrw26upbtCqq6byiDgn/view?usp=drive_link", homeworkLink: "https://forms.gle/38sL2my4QT7NoH7r7" },
-      { id: "tf2", title: "المحاضرة الثانية: التفسير", link: "https://drive.google.com/file/d/11ZAKMszdb9ElNIjMsllSBPBNaqpP68aM/view?usp=drive_link", homeworkLink: "https://docs.google.com/forms/d/1I40mwymBtTsKgtEUheOx2Cqn2NaYJ1t5XkuUN8FGkTw/edit?usp=forms_home&ouid=106441308019209743681" },
-      { id: "tf3", title: "المحاضرة الثالثة: التفسير", link: "https://drive.google.com/file/d/17ga9UaEakhtKJI6KUg_Ife0Dy4D4DFN7/view?usp=drive_link", homeworkLink: "https://forms.gle/XtFe2kFHJjLNgYy3A" },
+      { id: "tf1", title: "المحاضرة الأولى: التفسير", link: "https://www.youtube.com/watch?v=W5SVHp3jghw&list=PLKAsdarL8ueg&index=1&pp=iAQB", homeworkLink: "https://forms.gle/38sL2my4QT7NoH7r7" },
+      { id: "tf2", title: "المحاضرة الثانية: التفسير", link: "https://www.youtube.com/watch?v=1IvrH6FY3vQ&list=PLKAsdarL8ueg&index=2&pp=iAQB", homeworkLink: "https://docs.google.com/forms/d/1I40mwymBtTsKgtEUheOx2Cqn2NaYJ1t5XkuUN8FGkTw/edit?usp=forms_home&ouid=106441308019209743681" },
+      { id: "tf3", title: "المحاضرة الثالثة: التفسير", link: "https://www.youtube.com/watch?v=hpxX6vURHl4&list=PLKAsdarL8ueg&index=3&pp=iAQB", homeworkLink: "https://forms.gle/XtFe2kFHJjLNgYy3A" },
       { id: "tf4", title: "المحاضرة الرابعة: التفسير", link: "https://drive.google.com/file/d/1ybVBfpGwWhA5LbLtcptzduZwuipxECEl/view?usp=drive_link", homeworkLink: "https://forms.gle/thWPjEB9Geg3fhD99" },
       { id: "tf5", title: "المحاضرة الخامسة: التفسير", link: "https://drive.google.com/file/d/1OOIoWtn-K1oIcI6I36jJS90EoRH1Aa82/view?usp=drive_link", homeworkLink: "https://forms.gle/YAQCB8V9FEMeE5BT6" },
       { id: "tf6", title: "المحاضرة السادسة: التفسير", link: "https://drive.google.com/file/d/1tBOW4BSmxEGvgSCbEmcvWOF40ENRmxBV/view?usp=drive_link", homeworkLink: "" },
-      { id: "tf7", title: "المحاضرة السابعة: التفسير", link: "https://hlymw58-creator.github.io/8/", homeworkLink: "" },
-      { id: "tf8", title: "المحاضرة الثامنة: التفسير", link: "https://hlymw58-creator.github.io/9/", homeworkLink: "" }
+      { id: "tf7", title: "المحاضرة السابعة: التفسير", link: "https://www.youtube.com/watch?v=EwEPrCPcO6M", homeworkLink: "" },
+      { id: "tf8", title: "المحاضرة الثامنة: التفسير", link: "https://youtu.be/TfN6ayYwLfI?si=l_HWGnAbsHeupGQV", homeworkLink: "" }
     ];
  
     const fiqhLectures = [
@@ -2064,7 +2270,7 @@
 
 
     // ======================= الكورسات والعرض والوضع الليلي =======================
-    // لإضافة كورس جديد: أضف عنصراً هنا. isActive يحدد هل الطالب مشترك (يمكن ربطه بحقل آخر مستقبلاً).
+    // لإضافة كورس جديد: أضف عنصراً هنا (بطاقة «جدولي الأسبوعي» تظهر تلقائياً داخل أي كورس جديد ولها جدول مستقل لكل كورس). isActive يحدد هل الطالب مشترك (يمكن ربطه بحقل آخر مستقبلاً).
     // ولجعل محاضرة خاصة بكورس معيّن اكتب في المحاضرة اليدوية: courses: ["term1"]  (بدونها تظهر في كل الكورسات)
     const COURSES = [
       { id: "term1", icon: "📖", title: "كورس الترم الأول", sub: "منصة الشافعي الصغير", desc: "التوحيد • التفسير • الفقه • الحديث • المراجعات • المنتدى",
@@ -2543,7 +2749,8 @@
     // بيوقف أي تشغيل حالي وينظّف الفيديو الثقيل من الصفحة (iframe + مؤقتات العلامة المائية)
     // بدون ما يقفل نافذة المشغل نفسها
     function pvResetPlayer() {
-      document.querySelectorAll(".pv-drive-frame,.pv-drive-shield,#pv-watermark").forEach((n) => n.remove());
+      clearTimeout(pvYtPauseTimer);
+      document.querySelectorAll(".pv-drive-frame,.pv-drive-shield,.pv-yt-cover,#pv-watermark").forEach((n) => n.remove());
       if (pvPlayerInstance) {
         try { pvPlayerInstance.pause(); } catch (_) {}
         try { pvPlayerInstance.destroy(); } catch (_) {}
@@ -2591,7 +2798,7 @@
       document.getElementById("pvOverlay").classList.add("active");
  
       const facade = document.getElementById("pvFacade");
-      facade.style.backgroundImage = "none";
+      facade.style.backgroundImage = `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`;
       facade.style.display = "flex";
       document.getElementById("pvTouchOverlay").style.display = "none";
  
@@ -2626,27 +2833,10 @@
       const corners = [{ t: "8%", r: "5%" }, { t: "8%", r: "70%" }, { t: "75%", r: "5%" }, { t: "75%", r: "70%" }]; let c = 0;
       pvWatermarkInterval = setInterval(() => { c = (c + 1) % 4; wm.style.top = corners[c].t; wm.style.right = corners[c].r; }, 6000);
     }
-    // مفتاح Google Drive API (اختياري لكنه الأضمن): ضعه هنا بين العلامتين
-    const DRIVE_API_KEY = "";
-    const v0src = (id) => "https://drive.usercontent.google.com/download?id=" + id + "&export=download&confirm=t";
-    function pvDriveFail() {
-      pvResetPlayer();
-      const f = document.getElementById("pvFacade"); f.style.display = "flex";
-      document.getElementById("pvTouchOverlay").style.display = "none";
-      const m = document.createElement("div"); m.className = "pv-fail-msg";
-      m.style.cssText = "position:absolute;bottom:12%;left:0;right:0;text-align:center;color:#f4e285;font-weight:700;padding:0 12px";
-      m.textContent = "تعذّر تحميل الفيديو الآن، اضغط للمحاولة مرة أخرى 🔄"; f.appendChild(m);
-    }
     async function pvStartPlayback() {
-      document.querySelectorAll(".pv-fail-msg").forEach((n) => n.remove());
       const isDrive = !!pvPendingDriveId;
       if (!isDrive && !pvPendingVideoId) return;
-      if (!window.Plyr) { await loadPlyr(); if (!window.Plyr) {
-        if (!document.querySelector(".pv-loading")) { const l = document.createElement("div"); l.className = "pv-loading"; l.innerHTML = "<i></i><span>جاري تحميل المحاضرة… قد يستغرق لحظات</span>"; document.getElementById("pvVideoBox").appendChild(l); }
-        document.getElementById("pvFacade").style.display = "none";
-        setTimeout(() => { document.querySelectorAll(".pv-loading").forEach((n) => n.remove()); if (pvPendingDriveId || pvPendingVideoId) pvStartPlayback(); }, 3000);
-        return;
-      } }
+      if (!window.Plyr) { await loadPlyr(); if (!window.Plyr) { if (isDrive) pvStartDriveIframe(); return; } }
       const videoId = pvPendingVideoId;
       const driveId = pvPendingDriveId;
       const playerHost = document.getElementById("pvVideoBox");
@@ -2717,24 +2907,12 @@
       });
 
       if (isDrive) {
-        // بدون أي رجوع لمعاينة درايف: نجرّب أكتر من مصدر مباشر، ولو فشلوا نعرض رسالة وإعادة محاولة
-        const srcs = (DRIVE_API_KEY ? ["https://www.googleapis.com/drive/v3/files/" + driveId + "?alt=media&key=" + DRIVE_API_KEY] : []).concat([v0src(driveId), "https://drive.google.com/uc?export=download&confirm=t&id=" + driveId]);
-        playerDiv.src = srcs[0];
-        const ld = document.createElement("div"); ld.className = "pv-loading"; ld.innerHTML = "<i></i><span>جاري تحميل المحاضرة… قد يستغرق لحظات</span>"; playerHost.appendChild(ld);
-        const rmLd = () => ld.remove(); [ "loadeddata", "canplay", "playing" ].forEach((e) => playerDiv.addEventListener(e, rmLd));
-        let si = 0, loaded = false, ft = null, retryT = null;
-        const arm = () => {}; // لا مهلة: ننتظر مهما طال التحميل، ولا نغيّر المصدر إلا عند خطأ فعلي
-        const next = () => {
-          if (loaded || pvPendingDriveId !== driveId) return;
-          si++;
-          if (si < srcs.length) { playerDiv.src = srcs[si]; try { playerDiv.load(); } catch (_) {} arm(); }
-          else if (!retryT) { // لا رسالة فشل: نفضل نحمّل ونعيد المحاولة تلقائياً لحد ما الفيديو يشتغل
-            retryT = setTimeout(() => { retryT = null; if (loaded || pvPendingDriveId !== driveId) return; si = 0; playerDiv.src = srcs[0]; try { playerDiv.load(); } catch (_) {} }, 3000);
-          }
-        };
-        playerDiv.addEventListener("loadedmetadata", () => { loaded = true; clearTimeout(ft); });
-        playerDiv.addEventListener("error", () => { clearTimeout(ft); next(); });
-        arm();
+        // لو الفيديو ما اتحمّلش (ملف كبير أو صلاحيات) نرجع تلقائياً لمعاينة الدرايف
+        let loaded = false;
+        const fallback = () => { if (!loaded && pvPendingDriveId === driveId) pvStartDriveIframe(); };
+        const failTimer = setTimeout(fallback, 15000);
+        playerDiv.addEventListener("loadedmetadata", () => { loaded = true; clearTimeout(failTimer); });
+        playerDiv.addEventListener("error", () => { clearTimeout(failTimer); fallback(); });
       }
 
       const cornerPositions = [
@@ -2771,8 +2949,42 @@
       });
 
       pvSetupTouchZones();
+      if (!isDrive) pvSetupYtShield(videoId, playerHost); // يوتيوب فقط: إخفاء فيديوهات يوتيوب المقترحة
     }
- 
+
+    // ===== درع يوتيوب =====
+    // يوتيوب نفسه بيرسم شاشة "فيديوهات مقترحة/المزيد" فوق الفيديو في حالتين: عند نهاية الفيديو وعند الإيقاف المؤقت،
+    // حتى لو الفيديو علني وبإعداد rel=0. الحل إننا نغطي الإطار بغطاء خاص (فيه صورة الفيديو مظلّلة + رسالة) في الحالتين.
+    // لو عايز الفيديو يفضل ظاهر وقت الإيقاف (عشان الطالب يقرا السبورة) خلّيها false: هيتغطى عند النهاية بس.
+    const PV_HIDE_FRAME_ON_PAUSE = true;
+    let pvYtPauseTimer = null;
+    function pvSetupYtShield(videoId, host) {
+      const p = pvPlayerInstance; if (!p) return;
+      const cover = document.createElement("div");
+      cover.className = "pv-yt-cover";
+      cover.style.setProperty("--pv-thumb", `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`);
+      const msg = document.createElement("div"); cover.appendChild(msg);
+      // داخل .plyr نفسه (زي العلامة المائية) عشان يفضل شغال في وضع ملء الشاشة بتاع Plyr
+      (host.querySelector(".plyr") || host).appendChild(cover);
+      const END_TXT = "✅ انتهت المحاضرة — اضغط في المنتصف لإعادة المشاهدة";
+      const PAUSE_TXT = "⏸ الفيديو متوقف مؤقتاً — اضغط في المنتصف للمتابعة";
+      const show = (t) => { msg.textContent = t; cover.classList.add("show"); };
+      const hide = () => { clearTimeout(pvYtPauseTimer); cover.classList.remove("show"); };
+      const nearEnd = () => p.duration > 5 && p.duration - p.currentTime < 0.8; // نغطي قبل آخر ثانية عشان ما تظهرش لقطة النهاية
+      p.on("playing", () => { if (!nearEnd()) hide(); });
+      p.on("pause", () => {
+        if (!PV_HIDE_FRAME_ON_PAUSE) return;
+        clearTimeout(pvYtPauseTimer);
+        pvYtPauseTimer = setTimeout(() => { if (p.paused && !p.ended) show(PAUSE_TXT); }, 300); // تأخير بسيط يتجاهل التوقف اللحظي أثناء التقديم
+      });
+      p.on("ended", () => { clearTimeout(pvYtPauseTimer); show(END_TXT); });
+      p.on("timeupdate", () => {
+        if (!p.playing) return;
+        if (nearEnd()) show(END_TXT);
+        else if (cover.classList.contains("show")) hide(); // رجّع الطالب للخلف أو كمّل تشغيل
+      });
+    }
+
     function closeProtectedPlayer() {
       pvSetFull(false);
       pvResetPlayer();
@@ -3104,7 +3316,9 @@
         return `<div class="sub-expired">انتهت مدة صلاحية مشاهدة المحاضرة</div>${btn}`;
       }
       const done = (k) => !!attendanceRecords[k];
-      const hw = homeworkLink && homeworkLink.trim() ? `<a href="${escapeHtml(safeUrl(homeworkLink))}" target="_blank" rel="noopener noreferrer" class="btn-homework" onclick="markHomeworkDone('${id}')">📝 الواجب${done("hw_" + id) ? " ✓" : ""}</a>` : "";
+      const exReady = typeof examSplitLink === "function"; // الدوال في سكربت لاحق: حماية لو اتنادي الرسم مبكراً
+      const hwUrl = exReady ? examSplitLink(homeworkLink).url : String(homeworkLink || "").split("#ans=")[0].trim(), hwForm = exReady && examIsFormLink(hwUrl);
+      const hw = hwUrl ? `<a href="${escapeHtml(safeUrl(hwUrl))}" target="_blank" rel="noopener noreferrer" class="btn-homework" onclick="${hwForm ? `return examOpen('${id}')` : `markHomeworkDone('${id}')`}">📝 الواجب${hwForm ? examBadge(id, done("hw_" + id)) : (done("hw_" + id) ? " ✓" : "")}</a>` : "";
       const pdf = lecture.pdfLink ? `<a href="${escapeHtml(safeUrl(lecture.pdfLink))}" target="_blank" rel="noopener noreferrer" class="btn-open-lecture" style="background:#6a1b9a" onclick="markHomeworkDone('pdf_${id}')">📄 ملف PDF${done("pdf_" + id) ? " ✓" : ""}</a>` : "";
       return `<div class="sub-timer" data-exp="${S.until}">⏳ ${fmtDhms(S.left)}</div>
         <button type="button" class="btn-open-lecture" onclick="openLectureById('${id}')">🔗 دخول المحاضرة${done(id) ? " ✓" : ""}</button>${hw}${pdf}`;
@@ -3340,7 +3554,7 @@
           <div class="form-group"><label>الكورس المستهدف (يمكن اختيار أكثر من كورس):</label><div class="chk-row">${courseBoxes}</div></div>
           <div class="form-group"><label>رابط يوتيوب:</label><input id="admYt" type="url" required dir="ltr" value="${escapeHtml(l.youtubeUrl || "")}"></div>
           <div class="form-group"><label>موعد نزول المحاضرة (اليوم والتاريخ والساعة):</label><input id="admAt" type="datetime-local" required value="${l.releaseAt ? toLocalInput(timeOf(l)) : ""}"></div>
-          <div class="form-group"><label>رابط الواجب (اختياري):</label><input id="admHw" type="url" dir="ltr" value="${escapeHtml(l.homeworkLink || "")}"></div>
+          <div class="form-group"><label>رابط الواجب (اختياري) — لو جوجل فورم استخدم رابط التعديل (edit):</label><input id="admHw" type="url" dir="ltr" value="${escapeHtml(l.homeworkLink || "")}"></div>
           <div class="form-group"><label>رابط ملف PDF (اختياري):</label><input id="admPdf" type="url" dir="ltr" placeholder="https://...pdf" value="${escapeHtml(l.pdfLink || "")}"></div>
           <div class="form-group"><label>أو ارفع ملف PDF مباشرة (اختياري، حتى 8 ميجا):</label><input id="admPdfFile" type="file" accept="application/pdf,.pdf"><small id="admPdfStatus" style="color:#666"></small></div>
           <button class="btn-submit" type="submit" id="admSaveBtn">حفظ</button>
@@ -3545,6 +3759,110 @@
     }
     function markHomeworkDone(id) { markItemDone("hw_" + id); }
 
+    // ---------- 6) الواجب/الامتحان: أسئلة جوجل فورم تُقرأ وتُصحَّح من سيرفر المنصة (الطالب لا يرى جوجل فورم إطلاقاً) ----------
+    // الأدمن يضع رابط تعديل الفورم (edit) في خانة «رابط الواجب». الشرح الكامل في ملف exam-backend.gs
+    const EXAM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzNh79GRs3MD2cZ5jzpX_kPbuoCjsoK-2459JqDJrqUVSWorA24q2ECri15sCjkNtZ5Q/exec"; // ← ضع هنا رابط Web App لسكربت الامتحانات. لو فاضي: الواجب يُفتح كرابط عادي كما كان
+    let examState = null;
+    const examOn = () => /^https:\/\/script\.google\.com\//.test(EXAM_SCRIPT_URL);
+    const examIsFormLink = (u) => /^https?:\/\/(docs\.google\.com\/forms\/|forms\.gle\/|forms\.app\.goo\.gl\/)/i.test(String(u || "").trim());
+    const examSplitLink = (raw) => ({ url: String(raw || "").split("#ans=")[0].trim() });
+    const examFirstKey = (id) => "exam_first_" + (currentStudent ? currentStudent.phone : "") + "_" + id;
+    function examFirst(id) { try { return JSON.parse(localStorage.getItem(examFirstKey(id)) || "null"); } catch (_) { return null; } }
+    function examSetFirst(id, f) { if (f) { try { localStorage.setItem(examFirstKey(id), JSON.stringify(f)); } catch (_) {} } }
+    function examBadge(id, hwDone) { const r = examFirst(id); return (r && r.total) ? ` ✓ (${Number(r.score)}/${Number(r.total)})` : (hwDone || r ? " ✓" : ""); }
+
+    function examEl() {
+      let el = document.getElementById("examModal");
+      if (!el) { el = document.createElement("div"); el.id = "examModal"; el.className = "modal-overlay"; el.style.zIndex = "3000"; el.innerHTML = '<div class="modal-content ex-box" id="examBody"></div>'; document.body.appendChild(el); }
+      el.style.display = "flex"; return document.getElementById("examBody");
+    }
+    function examClose(force) {
+      if (examState && examState.running && !force && !confirm("لو خرجت دلوقتي هتفقد إجاباتك وتبدأ من الأول. تخرج؟")) return;
+      examState = null; const el = document.getElementById("examModal"); if (el) el.style.display = "none";
+    }
+    const examBtns = (retry, fn) => (retry ? `<button class="btn-submit" type="button" onclick="${fn}">🔄 إعادة المحاولة</button>` : "") + '<button class="btn-submit" type="button" style="background:#757575" onclick="examClose(true)">إغلاق</button>';
+    function examError(msg, fn) {
+      examEl().innerHTML = `<h3 class="modal-title">📝 الواجب</h3><p class="ex-note">${escapeHtml(msg || "تعذر الاتصال الآن. تأكد من الإنترنت وحاول مرة أخرى.")}</p>${examBtns(true, fn)}`;
+    }
+
+    function examOpen(id) {
+      const l = lectureIndex[id]; if (!l || !examOn()) return true; // بدون سكربت الامتحانات: يفتح الرابط كما كان
+      const sp = examSplitLink(l.homeworkLink); if (!examIsFormLink(sp.url)) return true;
+      examState = { id: id, url: sp.url, title: l.title || "", i: 0, ans: [], qs: null, info: null, running: false, rid: "" };
+      examLoad(); return false;
+    }
+    async function examLoad() {
+      const s = examState; if (!s) return;
+      examEl().innerHTML = '<p class="ex-note">⏳ جاري تحميل الامتحان...</p>';
+      const r = await callWithRetry(EXAM_SCRIPT_URL, { action: "examStart", phone: currentStudent.phone, lectureId: s.id, formUrl: s.url }, 3);
+      if (examState !== s) return;
+      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "", "examLoad()"); return; }
+      const d = r.data; s.info = d; examSetFirst(s.id, d.first);
+      if (d.locked) { examShowResult(d, false); return; }
+      s.qs = d.questions || []; examShowIntro();
+    }
+    function examShowIntro() {
+      const s = examState, d = s.info, f = d.first;
+      const prev = f ? `<p class="ex-note">درجتك المسجلة (المحاولة الأولى): <b>${f.total ? Number(f.score) + " / " + Number(f.total) : "تم التسليم"}</b> — ولن تتغير.</p>` : "";
+      examEl().innerHTML = `<h3 class="modal-title">📝 ${escapeHtml(s.title || d.title || "الواجب")}</h3>
+        <p class="ex-note">عدد الأسئلة: <b>${s.qs.length}</b> — المحاولة رقم <b>${Number(d.attempts) + 1}</b> من <b>${Number(d.max)}</b><br>سؤال واحد في كل مرة، ولا يمكن الرجوع للسؤال السابق.<br>⚠️ الدرجة المسجلة هي درجة محاولتك الأولى فقط${d.attempts ? "" : "، والإجابات الصحيحة تظهر لك مرة واحدة بعد هذه المحاولة"}.</p>${prev}
+        <button class="btn-submit" type="button" onclick="examStart()">ابدأ الآن</button>
+        <button class="btn-submit" type="button" style="background:#757575" onclick="examClose(true)">إغلاق</button>`;
+    }
+    function examStart() { const s = examState; if (!s || !s.qs) return; s.i = 0; s.ans = []; s.rid = ""; s.running = true; examShowQ(); }
+    function examOk(q, a) { return !q.required || (Array.isArray(a) ? a.length > 0 : (a != null && String(a).trim() !== "")); }
+    function examShowQ() {
+      const s = examState, q = s.qs[s.i], a = s.ans[s.i], n = s.qs.length, last = s.i === n - 1;
+      let body;
+      if (q.type === 1) body = `<textarea class="ex-text" rows="4" oninput="examText(this.value)">${escapeHtml(a || "")}</textarea>`;
+      else if (q.type === 0) body = `<input class="ex-text" oninput="examText(this.value)" value="${escapeHtml(a || "")}">`;
+      else body = q.opts.map((o, k) => {
+        const sel = q.type === 4 ? (a || []).includes(k) : a === k;
+        return `<div class="ex-opt ${q.type === 4 ? "chk" : ""} ${sel ? "sel" : ""}" onclick="examPick(${k})"><span class="ex-dot"></span><span>${escapeHtml(o)}</span></div>`;
+      }).join("");
+      examEl().innerHTML = `<div class="ex-count">سؤال ${s.i + 1} من ${n}</div><div class="ex-bar"><i style="width:${Math.round(s.i / n * 100)}%"></i></div>
+        <div class="ex-q">${escapeHtml(q.title)}${q.required ? ' <span style="color:#c62828">*</span>' : ""}</div>${q.help ? `<div class="ex-help">${escapeHtml(q.help)}</div>` : ""}
+        ${body}
+        <button class="btn-submit" type="button" id="exNext" onclick="examNext()" ${examOk(q, a) ? "" : "disabled"}>${last ? "✅ إنهاء وتسليم" : "التالي ⬅️"}</button>
+        <button class="btn-submit" type="button" style="background:#757575" onclick="examClose()">خروج</button>`;
+    }
+    function examPick(k) {
+      const s = examState, q = s.qs[s.i];
+      if (q.type === 4) { const a = s.ans[s.i] || [], j = a.indexOf(k); if (j < 0) a.push(k); else a.splice(j, 1); s.ans[s.i] = a; } else s.ans[s.i] = k;
+      examShowQ();
+    }
+    function examText(v) { const s = examState; s.ans[s.i] = v; const b = document.getElementById("exNext"); if (b) b.disabled = !examOk(s.qs[s.i], v); }
+    function examNext() {
+      const s = examState, q = s.qs[s.i]; if (!examOk(q, s.ans[s.i])) return;
+      if (s.i < s.qs.length - 1) { s.i++; examShowQ(); } else examSubmit();
+    }
+    async function examSubmit() {
+      const s = examState; if (!s) return; s.running = false;
+      examEl().innerHTML = '<p class="ex-note">⏳ جاري تسليم إجاباتك وتصحيحها... لا تغلق الصفحة</p>';
+      if (!s.rid) s.rid = Date.now() + "-" + Math.random().toString(36).slice(2); // نفس المعرّف عند إعادة الإرسال: لا تُحتسب محاولة مرتين
+      const ans = s.qs.map((_, i) => (s.ans[i] === undefined ? null : s.ans[i]));
+      const r = await callWithRetry(EXAM_SCRIPT_URL, { action: "examSubmit", phone: currentStudent.phone, lectureId: s.id, formUrl: s.url, answers: ans, requestId: s.rid }, 3);
+      if (examState !== s) return;
+      if (r.type !== "ok") { examError(r.type === "fail" ? safeMsg(r.message, "") : "لم يصلنا تأكيد التسليم. إجاباتك محفوظة هنا، اضغط إعادة المحاولة لإرسالها.", "examSubmit()"); return; }
+      examSetFirst(s.id, r.data.first);
+      markItemDone("hw_" + s.id); markExamDone(s.id);
+      examShowResult(r.data, true);
+    }
+    function examShowResult(d, fresh) {
+      const s = examState, f = d.first, left = Number(d.max || 1) - Number(d.attempts || 0);
+      const sc = (x) => (x && x.total) ? `<div class="ex-score">${Number(x.score)} / ${Number(x.total)}</div><div class="ex-note">النسبة: ${Math.round(x.score / x.total * 100)}%</div>` : '<div class="ex-score" style="font-size:26px">✅ تم تسليم إجاباتك</div>';
+      const rev = (d.review && d.review.length) ? `<div class="ex-rev-h">📖 الإجابات الصحيحة — تظهر مرة واحدة فقط</div>` + d.review.map((x, i) =>
+        `<div class="ex-rev ${x.ok ? "ok" : "bad"}"><b>${i + 1}. ${escapeHtml(x.q)}</b><div>إجابتك: ${x.mine.length ? x.mine.map(escapeHtml).join("، ") : "—"} ${x.ok ? "✅" : "❌"}</div>${x.ok ? "" : `<div>الصحيح: ${x.right.map(escapeHtml).join("، ")}</div>`}</div>`).join("") : "";
+      examEl().innerHTML = `<h3 class="modal-title">📝 ${escapeHtml((s && s.title) || "الواجب")}</h3>
+        ${fresh && Number(d.attempts) > 1 ? `<div class="ex-note">درجة هذه المحاولة: <b>${d.total ? Number(d.score) + " / " + Number(d.total) : "—"}</b></div>` : ""}
+        <div class="ex-note">${fresh ? "تم تسليم إجاباتك 🎉<br>" : ""}درجتك المسجلة (المحاولة الأولى):</div>${sc(f)}
+        <p class="ex-note">${left > 0 ? `متبقي لك ${left} ${left === 1 ? "محاولة" : "محاولات"} للتدريب، ودرجتك الأولى هي المسجلة.` : "استنفدت كل محاولاتك في هذا الامتحان."}</p>
+        ${rev}
+        ${left > 0 ? '<button class="btn-submit" type="button" onclick="examRetry()">🔁 محاولة تدريبية أخرى</button>' : ""}
+        <button class="btn-submit" type="button" style="background:#757575" onclick="examClose(true)">إغلاق</button>`;
+    }
+    function examRetry() { const id = examState && examState.id; examState = null; if (id) examOpen(id); }
+
     // ---------- 5) مؤثرات صوتية خفيفة ----------
     let sfxCtx = null;
     function sfxCtxEnsure() {
@@ -3652,14 +3970,93 @@
       el.innerHTML = `<span class="ni-ico">${NOTIF_ICONS[type] || "🔔"}</span><span></span>`;
       el.lastChild.textContent = text; // textContent: لا حقن HTML
       requestAnimationFrame(() => el.classList.add("show"));
-      clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 5500);
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), Math.min(14000, Math.max(5500, String(text).length * 70))); // الاقتباسات الطويلة تبقى وقتاً أطول
     }
     const MOTIVATION_MSGS = [
       "استمر يا بطل! العلم نور وخطوة جديدة تقربك من هدفك 🚀",
       "كل محاضرة تكملها بتقربك خطوة من التفوق 💪",
       "المذاكرة النهاردة هي فرحتك بكرة، كمّل بنشاط 🌟",
       "الاستمرارية أهم من السرعة، خطوة صغيرة كل يوم تصنع فرقاً كبيراً ✨",
-      "ربنا يفتح عليك ويبارك في وقتك، ابدأ بمحاضرة النهاردة 📖"
+      "ربنا يفتح عليك ويبارك في وقتك، ابدأ بمحاضرة النهاردة 📖",
+
+      // --- القرآن الكريم ---
+      "﴿يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ﴾ [المجادلة: 11]",
+      "﴿وَقُل رَّبِّ زِدْنِي عِلْمًا﴾ [طه: 114]",
+      "﴿قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ﴾ [الزمر: 9]",
+      "﴿إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ﴾ [فاطر: 28]",
+      "﴿شَهِدَ اللَّهُ أَنَّهُ لَا إِلَٰهَ إِلَّا هُوَ وَالْمَلَائِكَةُ وَأُولُو الْعِلْمِ قَائِمًا بِالْقِسْطِ﴾ [آل عمران: 18]",
+      "﴿وَتِلْكَ الْأَمْثَالُ نَضْرِبُهَا لِلنَّاسِ وَمَا يَعْقِلُهَا إِلَّا الْعَالِمُونَ﴾ [العنكبوت: 43]",
+      "﴿بَلْ هُوَ آيَاتٌ بَيِّنَاتٌ فِي صُدُورِ الَّذِينَ أُوتُوا الْعِلْمَ﴾ [العنكبوت: 49]",
+      "﴿وَيَرَى الَّذِينَ أُوتُوا الْعِلْمَ الَّذِي أُنزِلَ إِلَيْكَ مِن رَّبِّكَ هُوَ الْحَقَّ﴾ [سبأ: 6]",
+      "﴿اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ * خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ * اقْرَأْ وَرَبُّكَ الْأَكْرَمُ * الَّذِي عَلَّمَ بِالْقَلَمِ * عَلَّمَ الْإِنسَانَ مَا لَمْ يَعْلَمْ﴾ [العلق: 1-5]",
+      "﴿الرَّحْمَنُ * عَلَّمَ الْقُرْآنَ * خَلَقَ الْإِنسَانَ * عَلَّمَهُ الْبَيَانَ﴾ [الرحمن: 1-4]",
+      "﴿وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا﴾ [البقرة: 31]",
+      "﴿فَوَجَدَا عَبْدًا مِّنْ عِبَادِنَا آتَيْنَاهُ رَحْمَةً مِّنْ عِندِنَا وَعَلَّمْنَاهُ مِن لَّدُنَّا عِلْمًا﴾ [الكهف: 65]",
+      "﴿قَالَ لَهُ مُوسَىٰ هَلْ أَتَّبِعُكَ عَلَىٰ أَن تُعَلِّمَنِ مِمَّا عُلِّمْتَ رُشْدًا﴾ [الكهف: 66]",
+      "﴿فَلَوْلَا نَفَرَ مِن كُلِّ فِرْقَةٍ مِّنْهُمْ طَائِفَةٌ لِّيَتَفَقَّهُوا فِي الدِّينِ﴾ [التوبة: 122]",
+      "﴿فَاسْأَلُوا أَهْلَ الذِّكْرِ إِن كُنتُمْ لَا تَعْلَمُونَ﴾ [النحل: 43]",
+
+      // --- الأحاديث النبوية الشريفة ---
+      "قال رسول الله ﷺ: «مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا، سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ» [صحيح مسلم]",
+      "قال رسول الله ﷺ: «مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ» [صحيح البخاري]",
+      "قال رسول الله ﷺ: «إِنَّ المَلَائِكَةَ لَتَضَعُ أَجْنِحَتَهَا لِطَالِبِ العِلْمِ رِضًا بِمَا يَصْنَعُ» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَنْهُ عَمَلُهُ إِلاَّ مِنْ ثَلاَثٍ: إِلاَّ مِنْ صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ» [صحيح مسلم]",
+      "قال رسول الله ﷺ: «خَيْرُكُمْ مَنْ تَعَلَّمَ القُرْآنَ وَعَلَّمَهُ» [صحيح البخاري]",
+      "قال رسول الله ﷺ: «فَضْلُ الْعَالِمِ عَلَى الْعَابِدِ كَفَضْلِي عَلَى أَدْنَاكُمْ» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «الدُّنْيَا مَلْعُونَةٌ مَلْعُونٌ مَا فِيهَا إِلَّا ذِكْرُ اللَّهِ وَمَا وَالَاهُ وَعَالِمٌ أَوْ مُتَعَلِّمٌ» [سنن الترمذي]",
+      "قال معاذ بن جبل رضي الله عنه: «تَعَلَّمُوا العِلْمَ؛ فَإِنَّ تَعَلُّمَهُ لِلَّهِ خَشْيَةٌ، وَطَلَبَهُ عِبَادَةٌ، وَمُذَاكَرَتَهُ تَسْبِيحٌ» [جامع بيان العلم وفضله]",
+      "قال رسول الله ﷺ: «مَنْ خَرَجَ فِي طَلَبِ الْعِلْمِ فَهُوَ فِي سَبِيلِ اللَّهِ حَتَّى يَرْجِعَ» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «لا حَسَدَ إِلاّ فِي اثْنَتَيْنِ: رَجُلٌ آتَاهُ اللَّهُ مالاً فَسَلَّطَهُ عَلَى هَلَكَتِهِ فِي الحَقِّ، وَرَجُلٌ آتَاهُ اللَّهُ الحِكْمَةَ فَهُوَ يَقْضِي بِها وَيُعَلِّمُها» [صحيح البخاري]",
+      "قال رسول الله ﷺ: «إِنَّ اللَّهَ وَمَلَائِكَتَهُ وَأَهْلَ السَّمَوَاتِ وَالأَرَضِينَ حَتَّى النَّمْلَةَ فِي جُحْرِهَا وَحَتَّى الحُوتَ لَيُصَلُّونَ عَلَى مُعَلِّمِ النَّاسِ الخَيْرَ» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «نَضَّرَ اللَّهُ امْرَأً سَمِعَ مَقَالَتِي فَوَعَاهَا وَحَفِظَهَا وَبَلَّغَهَا» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «مَنْ دَعا إِلى هُدًى كانَ لَهُ مِنَ الأَجْرِ مِثْلُ أُجُورِ مَنْ تَبِعَهُ» [صحيح مسلم]",
+      "قال رسول الله ﷺ: «إنَّ العُلَماءَ ورَثَةُ الأَنْبِياءِ، وإنَّ الأَنْبِياءَ لَمْ يُوَرِّثُوا دِينَارًا ولا دِرْهَمًا، وإنَّما ورَّثُوا العِلْمَ» [سنن أبي داود]",
+      "قال رسول الله ﷺ: «طلبُ العلمِ فريضةٌ على كلِّ مسلمٍ» [سنن ابن ماجه]",
+      "قال رسول الله ﷺ: «مَنْ جَاءَ مَسْجِدِي هَذَا لَمْ يَأْتِهِ إِلاَّ لِخَيْرٍ يَتَعَلَّمُهُ أَوْ يُعَلِّمُهُ فَهُوَ بِمَنْزِلَةِ الْمُجَاهِدِ فِي سَبِيلِ اللَّهِ» [سنن ابن ماجه]",
+      "قال رسول الله ﷺ: «الكَلِمَةُ الحِكْمَةُ ضَالَّةُ المُؤْمِنِ فَحَيْثُ وَجَدَهَا فَهُوَ أَحَقُّ بِهَا» [سنن الترمذي]",
+      "قال رسول الله ﷺ: «احْرِصْ عَلَى مَا يَنْفَعُكَ، وَاسْتَعِنْ بِاللَّهِ وَلاَ تَعْجَزْ» [صحيح مسلم]",
+
+      // --- أبيات شعرية ---
+      "تَعَلَّمْ فَلَيْسَ المَرْءُ يُولَدُ عَالِمًا ... وَلَيْسَ أَخُو عِلْمٍ كَمَنْ هُوَ جَاهِلُ (الإمام الشافعي)",
+      "اصْبِرْ عَلَى مُرِّ الجَفَا مِنْ مُعَلِّمٍ ... فَإِنَّ رُسُوبَ العِلْمِ فِي نَفَرَاتِهِ (الإمام الشافعي)",
+      "وَمَنْ لَمْ يَذُقْ مُرَّ التَّعَلُّمِ سَاعَةً ... تَجَرَّعَ ذُلَّ الجَهْلِ طُولَ حَيَاتِهِ (الإمام الشافعي)",
+      "وَمَنْ فَاتَهُ التَّعْلِيمُ وَقْتَ شَبَابِهِ ... فَكَبِّرْ عَلَيْهِ أَرْبَعًا لِوَفَاتِهِ (الإمام الشافعي)",
+      "مَا الفَخْرُ إِلا لِأَهْلِ العِلْمِ إِنَّهُمُ ... عَلَى الهُدَى لِمَنِ اسْتَهْدَى أَدِلَّاءُ (الإمام علي بن أبي طالب)",
+      "وَقَدْرُ كُلِّ امْرِئٍ مَا كَانَ يُحْسِنُهُ ... وَالجَاهِلُونَ لِأَهْلِ العِلْمِ أَعْدَاءُ (الإمام علي بن أبي طالب)",
+      "فَفُزْ بِعِلْمٍ ولا تَطْلُبْ بِهِ بَدَلًا ... فَالنَّاسُ مَوْتَى وَأَهْلُ العِلْمِ أَحْيَاءُ (الإمام علي بن أبي طالب)",
+      "قُمْ لِلْمُعَلِّمِ وَوفِّهِ التَّبْجِيلا ... كَادَ المُعَلِّمُ أَنْ يَكُونَ رَسُولا (أحمد شوقي)",
+      "أَعَلِمْتَ أَشْرَفَ أَوْ أَجَلَّ مِنَ الَّذِي ... يَبْنِي وَيُنْشِئُ أَنْفُسًا وَعُقُولا (أحمد شوقي)",
+      "العِلْمُ يَرْفَعُ بَيْتًا لا عِمَادَ لَهُ ... وَالجَهْلُ يَهْدِمُ بَيْتَ العِزِّ وَالْكَرَمِ (حافظ إبراهيم)",
+      "أَعَزُّ مَكَانٍ فِي الدُّنَى سَرْجُ سَابِحٍ ... وَخَيْرُ جَلِيسٍ فِي الزَّمَانِ كِتَابُ (المتنبي)",
+      "وَلَمْ أَرَ فِي عُيُوبِ النَّاسِ شَيْئًا ... كَنَقْصِ القَادِرِينَ عَلَى التَّمَامِ (المتنبي)",
+      "اطْلُبِ العِلْمَ ولا تَكْسَلْ فَمَا ... أَبْعَدَ الخَيْرَ عَلَى أَهْلِ الكَسَلْ (ابن الوردي)",
+      "فِي ازْدِيَادِ العِلْمِ إِرْغَامُ العِدَا ... وَجَمَالُ العِلْمِ إِصْلاحُ العَمَلْ (ابن الوردي)",
+      "لا يَعْرِفُ العِلْمَ إِلا مَنْ يُقَاسِيهِ ... ولا يَنَالُ الهُدَى إِلا مَنْ يُعَانِيهِ (الخليل بن أحمد الفراهيدي)",
+      "أَخِي لَنْ تَنَالَ العِلْمَ إِلا بِسِتَّةٍ ... ذَكَاءٌ وَحِرْصٌ وَاجْتِهَادٌ وَدِرْهَمٌ وَصُحْبَةُ أُسْتَاذٍ وَطُولُ زَمَانِ (الإمام الشافعي)",
+
+      // --- أقوال وحكم العلماء والمفكرين ---
+      "تَعَلَّمُوا العِلْمَ وَعَلِّمُوهُ النَّاسَ، وَتَعَلَّمُوا لَهُ الوَقَارَ وَالسَّكِينَةَ. (عمر بن الخطاب)",
+      "اغْدُ عَالِمًا أَوْ مُتَعَلِّمًا أَوْ مُسْتَمِعًا، وَلا تَكُنِ الرَّابِعَةَ فَتَهْلِكُ. (عبد الله بن مسعود)",
+      "لَوْلا العُلَمَاءُ لَصَارَ النَّاسُ مِثْلَ البَهَائِمِ. (الحسن البصري)",
+      "النَّاسُ إِلَى العِلْمِ أَحْوَجُ مِنْهُمْ إِلَى الطَّعَامِ وَالشَّرَابِ؛ لأنَّ الطَّعَامَ وَالشَّرَابَ يُحْتَاجُ إِلَيْهِ فِي اليَوْمِ مَرَّةً أَوْ مَرَّتَيْنِ، وَالعِلْمُ يُحْتَاجُ إِلَيْهِ بِعَدَدِ الأَنْفَاسِ. (الإمام أحمد بن حنبل)",
+      "العِلْمُ يَهْتِفُ بِالعَمَلِ، فَإِنْ أَجَابَهُ وَإِلَّا ارْتَحَلَ. (ابن القيم الجوزية)",
+      "العِلْمُ بِلا عَمَلٍ جُنُونٌ، وَالعَمَلُ بِغَيْرِ عِلْمٍ لا يَكُونُ. (أبو حامد الغزالي)",
+      "أَوَّلُ العِلْمِ النِّيَّةُ، ثُمَّ الاسْتِمَاعُ، ثُمَّ الفَهْمُ، ثُمَّ الحِفْظُ، ثُمَّ العَمَلُ، ثُمَّ النَّشْرُ. (عبد الله بن المبارك)",
+      "لا يَزَالُ الرَّجُلُ عَالِمًا مَا تَعَلَّمَ، فَإِذَا تَرَكَ التَّعَلُّمَ وَظَنَّ أَنَّهُ قَدِ اكْتَفَى فَهُوَ أَجْهَلُ مَا يَكُونُ. (سعيد بن جبير)",
+      "مَنْ عَرَفَ شَرَفَ العُمْرِ وَقِيمَةَ المَوَاقِيتِ لَمْ يَفْرُطْ فِي لَحْظَةٍ بِغَيْرِ عِلْمٍ أو عَمَلٍ. (ابن الجوزي)",
+      "التعليم هو أقوى سلاح يمكنك استخدامه لتغيير العالم. (نيلسون مانديلا)",
+      "جذور التربية والتعليم مريرة، ولكن ثمارها حلوة. (أرسطو)",
+      "التعليم ليس ملء الإناء، بل هو إيقاد لشعلة. (سقراط)",
+      "الاستثمار في المعرفة يمنح أفضل الفوائد والأرباح. (بنيامين فرانكلين)",
+      "التعليم ليس تعلم الحقائق، بل هو تدريب العقل على التفكير. (ألبرت أينشتاين)",
+      "المعرفة في حد ذاتها هي قوة. (فرنسيس بيكون)",
+      "التعلم بدون تفكير جهد ضائع، والتفكير بدون تعلم أمر خطير. (كونفوشيوس)",
+      "القراءة تضيف إلى عمر الإنسان أعماراً أخرى. (عباس محمود العقاد)",
+      "التعليم كالماء والهواء حق لكل إنسان. (طه حسين)",
+      "التعليم هو جواز سفرنا إلى المستقبل، لأن الغد ينتمي لأولئك الذين يستعدون له اليوم. (مالكوم إكس)",
+      "أي شخص يتوقف عن التعلم هو عجوز، سواء كان في العشرين أو الثمانين. (هنري فورد)",
+      "العبقرية عبارة عن 1% إلهام، و99% جهد وعرق. (توماس إديسون)",
+      "العلم الحقيقي ليس حشو الرأس بالمعلومات، بل هو الشغف الذي يدفعك للبحث الدائم. (مصطفى محمود)"
     ];
     function maybeMotivate() {
       if (!currentStudent || !isActivatedValue(currentStudent.code) || document.hidden) return;
@@ -3749,56 +4146,253 @@
       setInterval(maybeMotivate, 15 * 60 * 1000);
     });
   </script>
-<script>
-/* ===== تتبع التقدم + الأصوات + تحسين الأداء ===== */
-(function(){
-  const $=id=>document.getElementById(id);
-  let key=null,st=null,seen=null,dur=0,lastSave=0;
-  const slow=()=>{const c=navigator.connection;return !!c&&(c.saveData||/2g|3g/.test(c.effectiveType||""))};
-  // أصوات خفيفة بدون ملفات
-  let ac=null;
-  function beep(f,d,t){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();
-    o.type=t||"sine";o.frequency.value=f;g.gain.value=.06;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(_){}}
-  const sClick=()=>beep(520,.08,"triangle"), sOk=()=>{beep(660,.15);setTimeout(()=>beep(880,.2),130);setTimeout(()=>beep(1175,.3),260)};
-  document.addEventListener("pointerdown",e=>{if(e.target.closest&&e.target.closest("button,.btn-homework,.pv-support-btn,.btn-submit"))sClick()},{passive:true});
-  function toast(m){let t=document.createElement("div");t.className="pv-toast";t.textContent=m;document.body.appendChild(t);
-    requestAnimationFrame(()=>t.classList.add("show"));setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),600)},4500)}
-  const pct=()=>{let n=0;for(let i=0;i<100;i++)n+=seen[i];return n};
-  function load(id){const who=(typeof currentStudent!=="undefined"&&currentStudent&&currentStudent.phone)||"x";key="pvstat:"+who+":"+id;
-    try{st=JSON.parse(localStorage.getItem(key))||null}catch(_){st=null}
-    st=st||{opens:0,done:0,seen:[],pos:0};seen=new Uint8Array(100);(st.seen||[]).forEach(i=>{seen[i]=1})}
-  function save(force){const n=Date.now();if(!force&&n-lastSave<4000)return;lastSave=n;
-    st.seen=[];for(let i=0;i<100;i++)if(seen[i])st.seen.push(i);try{localStorage.setItem(key,JSON.stringify(st))}catch(_){}}
-  function paint(){if(!st)return;const p=pct();if(p===lastPct)return;lastPct=p;$("pvProgFill").style.width=p+"%";
-    $("pvProgTxt").textContent="تم إنجاز "+p+"% من المحاضرة • فتحتها "+st.opens+" مرة • أكملتها "+st.done+" مرة"}
-  // تسخين مسبق: تحميل المشغّل وسكربت يوتيوب في وقت فراغ المتصفح قبل ما الطالب يفتح أي محاضرة
-  const warm=()=>{try{loadPlyr();["https://www.youtube.com/iframe_api"].forEach(u=>{const l=document.createElement("link");l.rel="preload";l.as="script";l.href=u;document.head.appendChild(l)})}catch(_){}};
-  (window.requestIdleCallback||setTimeout)(warm,1500);
-  let lastPct=-1;
-  const _open=window.openProtectedPlayer;
-  window.openProtectedPlayer=function(url,title){
-    const id=(typeof extractYouTubeId==="function"&&extractYouTubeId(url))||(typeof extractDriveId==="function"&&extractDriveId(url))||url;
-    load(id);st.opens++;save(true);lastPct=-1;paint();
-    const r=_open.apply(this,arguments);
-    // تشغيل فوري: بنبدأ تحميل الفيديو لحظة الفتح بدل انتظار الضغط على زر التشغيل
-    if(document.getElementById("pvOverlay").classList.contains("active"))setTimeout(()=>window.pvStartPlayback(),0);
-    return r};
-  const _start=window.pvStartPlayback;
-  window.pvStartPlayback=async function(){
-    await _start.apply(this,arguments);
-    const p=window.pvPlayerInstance||pvPlayerInstance;if(!p||!st)return;
-    if(!document.querySelector(".pv-loading")){const l=document.createElement("div");l.className="pv-loading";l.innerHTML="<i></i><span>جاري تحميل المحاضرة…</span>";$("pvVideoBox").appendChild(l);
-      const rm=()=>l.remove();["ready","canplay","playing","loadeddata"].forEach(e=>p.on(e,rm))}
-    p.on("loadedmetadata",()=>{dur=p.duration||0;if(st.pos>5&&dur&&st.pos<dur-10){try{p.currentTime=st.pos;toast("تم استكمال المحاضرة من حيث توقفت ▶")}catch(_){}}});
-    p.on("timeupdate",()=>{if(!dur)dur=p.duration||0;if(!dur)return;const t=p.currentTime;seen[Math.min(99,Math.floor(t/dur*100))]=1;st.pos=t;paint();save()});
-    p.on("ended",()=>{for(let i=0;i<100;i++)seen[i]=1;st.done++;st.pos=0;save(true);lastPct=-1;paint();sOk();toast("🎉 مبروك! أتممت المحاضرة بالكامل 100%")});
-    if(slow()){try{p.on("ready",()=>{p.media&&(p.media.preload="metadata")})}catch(_){}}
-  };
-  const _close=window.closeProtectedPlayer;
-  window.closeProtectedPlayer=function(){
-    if(st){save(true);const p=pct();if(p<100)toast("وقفت عند "+p+"% من المحاضرة — قدّمنا "+p+"% وفتحتها "+st.opens+" مرة وأكملتها "+st.done+" مرة")}
-    return _close.apply(this,arguments)};
-})();
-</script>
+  <script>
+    // ============================================================
+    // ============ [NEW v3] Weekly Schedule Module ============
+    // ============================================================
+    const SCHED_DAYS = [["sat","السبت"],["sun","الأحد"],["mon","الاثنين"],["tue","الثلاثاء"],["wed","الأربعاء"],["thu","الخميس"],["fri","الجمعة"]];
+    const SCHED_MAX_PER_DAY = 100;
+    const LOGO_URL = "https://lh3.googleusercontent.com/d/11cx_kG09s3PtT70TFoBZ2S8yw_WvIOkD";
+
+    // كل كورس له جدوله الخاص تلقائياً (الكورس الأول يحتفظ بالمفتاح القديم حتى لا تضيع جداول الطلاب الحالية)
+    const schedKey = () => "sched_" + (currentStudent ? currentStudent.phone : "guest")
+      + ((typeof currentCourse !== "undefined" && currentCourse !== COURSES[0].id) ? "_" + currentCourse : "");
+    const schedArchiveKey = () => schedKey() + "_archive";
+    const schedDismissKey = () => schedKey() + "_dismissed";
+
+    function getSchedule() { try { return JSON.parse(localStorage.getItem(schedKey()) || "null"); } catch (_) { return null; } }
+    function saveSchedule(s) { s.updatedAt = Date.now(); try { localStorage.setItem(schedKey(), JSON.stringify(s)); } catch (_) {}
+      // سجل تخزين على السيرفر (أفضل جهد — لا يعطل العمل لو تعذّر)
+      try { if (currentStudent && typeof callScript === "function") callScript(GOOGLE_SCRIPT_URL, { action: "logSchedule", studentPhone: currentStudent.phone, course: currentCourse, schedule: s }); } catch (_) {} }
+    function getSchedArchive() { try { return JSON.parse(localStorage.getItem(schedArchiveKey()) || "[]"); } catch (_) { return []; } }
+    function archiveSchedule() {
+      const s = getSchedule(); if (!s) return;
+      const a = getSchedArchive(); a.unshift({ at: Date.now(), title: s.title, days: s.days });
+      try { localStorage.setItem(schedArchiveKey(), JSON.stringify(a.slice(0, 30))); } catch (_) {} }
+
+    const newSchedule = () => { const d = {}; SCHED_DAYS.forEach(([k]) => { d[k] = []; }); return { title: "جدولي الأسبوعي", days: d, createdAt: Date.now(), updatedAt: Date.now() }; };
+    const schedUid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const schedTodayKey = () => { try { return cairoDayKey(); } catch (_) { return new Date().toISOString().slice(0, 10); } };
+    const fmtSchedTime = (ts) => new Date(ts).toLocaleTimeString("ar-EG", { hour: "numeric", minute: "2-digit", timeZone: "Africa/Cairo" });
+
+    // يحدد مفتاح اليوم الحالي (بتوقيت القاهرة) للتمييز البصري
+    function todayDayCode() {
+      try {
+        const w = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short" }).format(new Date());
+        return { Sat: "sat", Sun: "sun", Mon: "mon", Tue: "tue", Wed: "wed", Thu: "thu", Fri: "fri" }[w] || "";
+      } catch (_) { return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][new Date().getDay()]; }
+    }
+
+    // ---------- الواجهة ----------
+    function schedLockedHTML() {
+      return `<div class="lecture-card locked" style="text-align:center;padding:30px;">
+        <h3>🔒 الجدول الأسبوعي</h3>
+        <p style="margin:14px 0;color:#555;">فعّل كود الكورس أولاً لكي تتمكن من إنشاء جدولك الأسبوعي وتتبع إنجازك.</p>
+        <button class="btn-activate-code" style="padding:10px 22px;font-size:15px;" onclick="openCodeModal()">🔑 تفعيل كود الآن</button></div>`; }
+
+    function schedEntryHTML(day, e, i, total) {
+      return `<div class="sched-entry ${e.done ? "done" : ""}">
+        <input type="checkbox" class="sched-check" ${e.done ? "checked" : ""} onchange="schedToggle('${day}','${e.id}')" title="علّم كمكتمل">
+        <div class="sched-entry-main">
+          <div class="sched-name">${i + 1}. ${escapeHtml(e.name)}</div>
+          ${e.lesson ? `<div class="sched-lesson">📖 ${escapeHtml(e.lesson)}</div>` : ""}
+          ${e.done && e.doneAt ? `<div class="sched-done-at">✅ أتممتها ${fmtSchedTime(e.doneAt)}</div>` : ""}
+        </div>
+        ${e.time ? `<span class="sched-time">${escapeHtml(e.time)}</span>` : ""}
+        <div class="sched-entry-tools">
+          <button class="mini-btn" onclick="schedMove('${day}','${e.id}',-1)" title="أولوية أعلى" ${i === 0 ? "disabled" : ""}>▲</button>
+          <button class="mini-btn" onclick="schedMove('${day}','${e.id}',1)" title="أولوية أقل" ${i === total - 1 ? "disabled" : ""}>▼</button>
+          <button class="mini-btn" onclick="schedDel('${day}','${e.id}')" title="حذف">🗑</button>
+        </div></div>`; }
+
+    function schedDayHTML(code, name, list, isToday) {
+      const done = list.filter((e) => e.done).length, total = list.length, allDone = total > 0 && done === total;
+      const lastAt = allDone ? Math.max.apply(null, list.map((e) => e.doneAt || 0)) : 0;
+      return `<div class="sched-day ${isToday ? "today" : ""}">
+        <div class="sched-day-head">
+          <span class="sched-day-name">${isToday ? '<span class="sched-today-badge">اليوم</span>' : ""} ${name}</span>
+          <span class="sched-progress">${total ? done + "/" + total + (allDone ? " ✅" : "") : "لا توجد مواد"}</span>
+        </div>
+        ${allDone ? `<div class="sched-day-complete">🏁 أتممت كل مهام اليوم في ${fmtSchedTime(lastAt)}</div>` : ""}
+        ${list.map((e, i) => schedEntryHTML(code, e, i, total)).join("")}
+        <div class="sched-add">
+          <input id="sn-${code}" placeholder="اسم المادة" maxlength="60">
+          <input id="st-${code}" type="time" title="الوقت المفضل">
+          <input id="sl-${code}" class="full" placeholder="اسم الدرس (اختياري)" maxlength="80">
+          <button class="btn-submit btn-3d btn-3d-glow sched-add-btn" style="grid-column:1/-1;padding:10px;font-size:14px;" onclick="schedAdd('${code}')">➕ إضافة المادة</button>
+        </div></div>`; }
+
+    function renderSchedule() {
+      const c = document.getElementById("scheduleContainer"); if (!c) return;
+      const ok = currentStudent && isActivatedValue(currentStudent.code);
+      if (!ok) { c.innerHTML = schedLockedHTML(); return; }
+      let s = getSchedule();
+      if (!s) {
+        c.innerHTML = `<div class="sched-wrap"><div class="sched-hero">
+          <div><h3>🗓️ اعمل جدولك الأسبوعي</h3><p>نظّم مذاكرتك: أضف موادك بأوقاتها، علّم على إنجازك يومياً، واطبع جدولك PDF.</p></div>
+          <div class="sched-hero-actions"><button class="btn-activate-code btn-3d" style="padding:12px 26px;font-size:15px;" onclick="schedCreate()">🚀 ابدأ الآن</button></div>
+        </div></div>`;
+        return; }
+      const td = todayDayCode();
+      c.innerHTML = `<div class="sched-wrap">
+        <div class="sched-hero">
+          <div><h3>🗓️ ${escapeHtml(s.title)}</h3><p>آخر تعديل: ${new Date(s.updatedAt).toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Cairo" })}</p></div>
+        </div>
+        <div class="sched-toolbar">
+          <input class="sched-title-input" id="schedTitleInput" value="${escapeHtml(s.title)}" maxlength="60" placeholder="اسم الجدول">
+          <button class="btn-submit btn-3d btn-3d-glow" style="width:auto;padding:11px 20px;font-size:14px;" onclick="schedSaveTitle()">💾 حفظ الاسم</button>
+        </div>
+        <div class="sched-days">${SCHED_DAYS.map(([k, n]) => schedDayHTML(k, n, s.days[k] || [], k === td)).join("")}</div>
+        <div class="sched-bottom">
+          <button type="button" class="sched-big-btn pdf" onclick="exportSchedulePDF()"><span class="sb-ico">🖨️</span>إخراج PDF<small>اطبع جدولك أو احفظه</small></button>
+          <button type="button" class="sched-big-btn logs" onclick="openSchedArchive()"><span class="sb-ico">🗂️</span>سجلات الجداول<small>راجع نسخك السابقة</small></button>
+          <button type="button" class="sched-big-btn fresh" onclick="schedReset()"><span class="sb-ico">🧹</span>جدول جديد<small>أرشف الحالي وابدأ من جديد</small></button>
+        </div>
+      </div>`; }
+
+    // ---------- العمليات ----------
+    function schedCreate() { saveSchedule(newSchedule()); renderSchedule(); schedDailyNotify(true); }
+    function schedReset() { if (!confirm("سيتم أرشفة الجدول الحالي والبدء بجدول جديد. متابعة؟")) return; archiveSchedule(); saveSchedule(newSchedule()); renderSchedule(); }
+    function schedSaveTitle() { const s = getSchedule(); if (!s) return; const t = cleanText(document.getElementById("schedTitleInput").value); if (t) { archiveSchedule(); s.title = t; saveSchedule(s); pushNotif("تم حفظ جدولك الأسبوعي بنجاح ✅", "system", { silent: true }); } renderSchedule(); }
+    function schedAdd(day) {
+      const s = getSchedule(); if (!s) return;
+      const name = cleanText(document.getElementById("sn-" + day).value);
+      if (!name) { alert("اكتب اسم المادة أولاً."); return; }
+      const list = s.days[day] || (s.days[day] = []);
+      if (list.length >= SCHED_MAX_PER_DAY) { alert("وصلت للحد الأقصى (" + SCHED_MAX_PER_DAY + " مادة في اليوم)."); return; }
+      list.push({ id: schedUid(), name, lesson: cleanText(document.getElementById("sl-" + day).value), time: document.getElementById("st-" + day).value, done: false, doneAt: null });
+      saveSchedule(s); renderSchedule(); updateSchedPrompt(); }
+    function schedToggle(day, id) {
+      const s = getSchedule(); if (!s) return;
+      const e = (s.days[day] || []).find((x) => x.id === id); if (!e) return;
+      e.done = !e.done; e.doneAt = e.done ? Date.now() : null;
+      saveSchedule(s); renderSchedule(); updateSchedPrompt(); schedDailyNotify(false);
+      const today = s.days[day] || [];
+      if (e.done && day === todayDayCode() && today.length && today.every((x) => x.done))
+        pushNotif("🎉 ما شاء الله! أتممت كل مهام جدول اليوم. استمر أنت عظيم!", "streak"); }
+    function schedDel(day, id) { const s = getSchedule(); if (!s || !confirm("حذف هذه المادة من الجدول؟")) return; s.days[day] = (s.days[day] || []).filter((x) => x.id !== id); saveSchedule(s); renderSchedule(); updateSchedPrompt(); }
+    function schedMove(day, id, dir) {
+      const s = getSchedule(); if (!s) return; const l = s.days[day] || []; const i = l.findIndex((x) => x.id === id);
+      const j = i + dir; if (i < 0 || j < 0 || j >= l.length) return;
+      const t = l[i]; l[i] = l[j]; l[j] = t; saveSchedule(s); renderSchedule(); }
+
+    // ---------- سجل الجداول ----------
+    let schedArchModal = null;
+    function openSchedArchive() {
+      if (!schedArchModal) {
+        schedArchModal = document.createElement("div"); schedArchModal.className = "modal-overlay"; schedArchModal.style.display = "none";
+        schedArchModal.innerHTML = `<div class="modal-content"><h3 class="modal-title">🗂️ سجلات الجداول السابقة</h3>
+          <div id="schedArchList" style="max-height:55vh;overflow:auto;"></div>
+          <button class="btn-submit btn-3d" style="background:#757575;margin-top:8px" onclick="schedArchModal.style.display='none'">إغلاق</button></div>`;
+        document.body.appendChild(schedArchModal); }
+      const a = getSchedArchive();
+      document.getElementById("schedArchList").innerHTML = a.length ? a.map((v, i) => {
+        const n = Object.values(v.days || {}).reduce((x, l) => x + l.length, 0);
+        const rows = SCHED_DAYS.map(([k, nm]) => { const l = (v.days && v.days[k]) || []; return l.length ? `<b>${nm}:</b> ${l.map((e) => escapeHtml(e.name) + (e.time ? " (" + e.time + ")" : "")).join("، ")}` : ""; }).filter(Boolean).join("<br>");
+        return `<details class="arch-ver"><summary>${new Date(v.at).toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Cairo" })} — ${escapeHtml(v.title)} (${n} مادة)</summary><div class="arch-body">${rows || "جدول فارغ"}</div></details>`;
+      }).join("") : '<p style="text-align:center;color:#777;padding:16px;">لا توجد نسخ مؤرشفة بعد — يتم الأرشفة تلقائياً عند كل تعديل.</p>';
+      schedArchModal.style.display = "flex"; }
+
+    // ---------- الإشعارات الذكية ----------
+    function schedDailyNotify(force) {
+      if (!currentStudent || !isActivatedValue(currentStudent.code)) return;
+      const s = getSchedule(); if (!s) return;
+      const list = s.days[todayDayCode()] || []; if (!list.length) return;
+      const k = schedKey() + "_greet_" + schedTodayKey();
+      if (!force && localStorage.getItem(k)) return;
+      try { localStorage.setItem(k, "1"); } catch (_) {}
+      const quotes = ["استمر أنت عظيم 💪", "خطوة كل يوم تصنع فرقاً كبيراً 🌟", "العلم نور، وربنا مع الصابرين 🤍"];
+      pushNotif(`🗓️ ${quotes[Math.floor(Math.random() * quotes.length)]} — ابدأ جدولك اليومي: عندك ${list.length} ${list.length === 1 ? "مادة" : "مواد"} النهاردة.`, "motivation"); }
+
+    // شريط المهمة التالية المعلّقة
+    let schedPromptEl = null, schedPromptHide = {};
+    function updateSchedPrompt() {
+      if (!schedPromptEl) { schedPromptEl = document.createElement("div"); schedPromptEl.id = "schedPrompt"; document.body.appendChild(schedPromptEl); }
+      const ok = currentStudent && isActivatedValue(currentStudent.code);
+      const s = ok ? getSchedule() : null;
+      const list = s ? (s.days[todayDayCode()] || []) : [];
+      const next = list.find((e) => !e.done);
+      if (!next) { schedPromptEl.classList.remove("show"); return; }
+      const dk = schedKey() + "_dismissed_" + schedTodayKey();
+      let dis = {}; try { dis = JSON.parse(sessionStorage.getItem(dk) || "{}"); } catch (_) {}
+      if (dis[next.id]) { schedPromptEl.classList.remove("show"); return; }
+      schedPromptEl.innerHTML = `<span>📌 أنت لسه ما خلصتش «${escapeHtml(next.name)}»${next.time ? " (الساعة " + escapeHtml(next.time) + ")" : ""} — لو خلصتها ادخل علّم عليها! 💪</span>
+        <button class="sp-close" onclick="event.stopPropagation();dismissSchedPrompt('${next.id}')" title="إخفاء">✕</button>`;
+      schedPromptEl.onclick = (ev) => { if (ev.target.closest(".sp-close")) return; openSubject("scheduleTab"); renderSchedule(); };
+      schedPromptEl.classList.add("show"); }
+    function dismissSchedPrompt(id) {
+      const dk = schedKey() + "_dismissed_" + schedTodayKey(); let dis = {};
+      try { dis = JSON.parse(sessionStorage.getItem(dk) || "{}"); } catch (_) {}
+      dis[id] = 1; try { sessionStorage.setItem(dk, JSON.stringify(dis)); } catch (_) {}
+      updateSchedPrompt(); }
+
+    // ---------- تصدير PDF ----------
+    function exportSchedulePDF() {
+      const s = getSchedule();
+      const total = s ? Object.values(s.days).reduce((a, l) => a + l.length, 0) : 0;
+      if (!s || !total) { alert("الجدول فارغ — أضف موادك أولاً."); return; }
+      const old = document.getElementById("printArea"); if (old) old.remove();
+      const pa = document.createElement("div"); pa.id = "printArea";
+      const rows = SCHED_DAYS.map(([k, nm]) => {
+        const l = (s.days[k] || []).filter((e) => e.name);
+        if (!l.length) return "";
+        const body = l.map((e, i) => `<tr><td>${i + 1}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.lesson || "—")}</td><td>${e.time ? escapeHtml(e.time) : "—"}</td><td class="${e.done ? "pr-done" : "pr-pending"}">${e.done ? "✓ تم" : "—"}</td></tr>`).join("");
+        return `<tr class="pr-day-row"><td colspan="5">${nm}</td></tr>${body}`;
+      }).join("");
+      pa.innerHTML = `<div class="pr-head"><img src="${LOGO_URL}" alt=""><div><div class="pr-brand">منصة الشافعي الصغير</div><div class="pr-title">${escapeHtml(s.title)}</div></div></div>
+        <div class="pr-meta">تاريخ الإخراج: ${new Date().toLocaleDateString("ar-EG", { dateStyle: "full", timeZone: "Africa/Cairo" })}</div>
+        <table class="pr-table"><thead><tr><th>#</th><th>المادة</th><th>الدرس</th><th>الوقت</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table>
+        <div class="pr-foot">منصة الشافعي الصغير — إعداد أ. أبو بكر الشافعي</div>`;
+      document.body.appendChild(pa);
+      const cleanup = () => { pa.remove(); window.removeEventListener("afterprint", cleanup); };
+      window.addEventListener("afterprint", cleanup);
+      window.print();
+      setTimeout(cleanup, 2000); }
+
+    // ---------- الربط بالمنصة ----------
+    function goSchedule() { try { sfxClick(); } catch (_) {} if (typeof view !== "undefined" && view !== "course") enterCourse(currentCourse); openSubject("scheduleTab"); renderSchedule(); }
+
+    // بطاقة الجدول ضمن شبكة المواد
+    SUBJECT_CARDS.splice(SUBJECT_CARDS.length - 1, 0,
+      { tab: "scheduleTab", title: "جدولي الأسبوعي", icon: "🗓️", short: "الجدول", subjects: [], schedule: true,
+        banner: "", grad: "linear-gradient(135deg,#1a237e,#3949ab)", desc: "نظّم مذاكرتك: خطط أسبوعك، علّم على إنجازك، واطبع جدولك PDF." });
+
+    // رسم الشبكة مع دعم بطاقة الجدول
+    const _renderSubjectGrid = window.renderSubjectGrid;
+    window.renderSubjectGrid = function () {
+      const g = document.getElementById("subjectGrid"); if (!g) return;
+      g.innerHTML = SUBJECT_CARDS.map((c, i) => {
+        const ls = subjectLectures(c), total = ls.length, done = ls.filter((l) => attendanceRecords[l.id]).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        const bg = c.banner ? `url('${c.banner}') center/cover, ${c.grad}` : c.grad;
+        const meta = c.schedule ? "مخططك الأسبوعي 🗓️" : c.forum ? "نقاش مباشر" : `${total} محاضرة • أتممت ${done}`;
+        return `<article class="subject-card" role="button" tabindex="0" style="animation-delay:${i * 60}ms" onclick="openSubject('${c.tab}')" onkeydown="if(event.key==='Enter')openSubject('${c.tab}')">
+          <div class="subject-banner" style="background:${bg}"><span class="subject-icon">${c.icon}</span><h3 class="subject-title">${escapeHtml(c.title)}</h3><span class="subject-meta">${meta}</span></div>
+          <div class="subject-body"><p>${escapeHtml(c.desc)}</p>${c.forum || c.schedule ? "" : `<div class="sc-bar"><div class="sc-fill" style="width:${pct}%"></div></div>`}
+            <button type="button" class="btn-submit btn-3d subject-enter">الدخول</button></div></article>`; }).join(""); };
+
+    // تفعيل تبويب الجدول
+    const _switchTab = window.switchTab;
+    window.switchTab = function (tabId, btn) { _switchTab(tabId, btn); if (tabId === "scheduleTab") renderSchedule(); };
+
+    // تكامل مع renderAll: إشعار أول مرة يومياً + تذكير المحاضرات الجديدة + التذكير الذكي
+    let schedLecCount = -1;
+    const _renderAll = window.renderAll;
+    window.renderAll = function () {
+      _renderAll();
+      try {
+        if (!currentStudent || !isActivatedValue(currentStudent.code)) { if (schedPromptEl) schedPromptEl.classList.remove("show"); return; }
+        const n = (typeof lectureIndex !== "undefined" && lectureIndex) ? Object.keys(lectureIndex).length : 0;
+        if (schedLecCount >= 0 && n > schedLecCount)
+          pushNotif("🎓 تنبيه: نزلت محاضرة جديدة على المنصة + افتكر تكمل جدولك اليومي 📖", "lecture");
+        schedLecCount = n;
+        schedDailyNotify(false);
+        updateSchedPrompt();
+        if (view === "course" && document.getElementById("scheduleTab") && document.getElementById("scheduleTab").classList.contains("active")) renderSchedule();
+      } catch (e) { console.error("sched", e); } };
+
+    setInterval(updateSchedPrompt, 60000);
+  </script>
+
 </body>
 </html>
