@@ -6274,5 +6274,137 @@ start();
 })();
 
 </script>
+<style>
+.pv-fav-btn{position:absolute;top:10px;left:52px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.6);border:2px solid #fff;font-size:16px;cursor:pointer;z-index:30;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:transform .15s}
+.pv-fav-btn:active{transform:scale(.88)}
+.pv-fav-btn.on{background:#fff}
+.pv-overlay.pv-full .pv-fav-btn{top:6px;left:40px;width:28px;height:28px;font-size:14px;opacity:.85}
+@media (max-width:600px){.pv-fav-btn{top:6px;left:40px;width:28px;height:28px;font-size:14px;opacity:.9}}
+.lec-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 10px}
+.btn-share{background:#1a73e8;color:#fff;border:0;border-radius:8px;padding:6px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn-share:hover{filter:brightness(1.1)}
+.lec-fav-tag{font-size:12px;color:#e53935;font-weight:700}
+.lecture-card.deep-hl{outline:3px solid #d4af37;outline-offset:3px;animation:deepPulse 1s ease-in-out 3}
+@keyframes deepPulse{50%{outline-color:transparent}}
+.deep-notice{background:#fff8e1;color:#7a5200;border:1px solid #f0d27a;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:14px;font-weight:700;text-align:center}
+</style>
+<script>
+/* ===== المفضلة + المشاركة + روابط المحاضرات المباشرة مع التحقق من الاشتراك ===== */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const DL_KEY = "shafeei_deeplink";
+  const toast = (t) => { try { showNotifToast(t, "system"); } catch (_) { alert(t); } };
+
+  /* ---------- 1) المفضلة (قلب داخل مشغل المحاضرة) ---------- */
+  const favKey = () => "fav_" + (currentStudent ? normalizePhone(currentStudent.phone) : "guest");
+  const getFavs = () => { try { const a = JSON.parse(localStorage.getItem(favKey()) || "[]"); return Array.isArray(a) ? a : []; } catch (_) { return []; } };
+  const isFav = (id) => getFavs().includes(String(id));
+  let curId = null;
+  function ensureHeart() {
+    if ($("pvFavBtn")) return;
+    const card = document.querySelector("#pvOverlay .pv-card"); if (!card) return;
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "pvFavBtn"; b.className = "pv-fav-btn"; b.onclick = toggleFav;
+    card.appendChild(b);
+  }
+  function paintHeart() {
+    const b = $("pvFavBtn"); if (!b) return;
+    const on = !!curId && isFav(curId);
+    b.style.display = curId ? "" : "none";
+    b.classList.toggle("on", on);
+    b.textContent = on ? "❤️" : "🤍";
+    b.title = on ? "إزالة من المفضلة" : "أضف إلى المفضلة";
+  }
+  function toggleFav() {
+    if (!curId) return;
+    const id = String(curId); let f = getFavs();
+    f = f.includes(id) ? f.filter((x) => x !== id) : f.concat(id);
+    try { localStorage.setItem(favKey(), JSON.stringify(f)); } catch (_) {}
+    paintHeart(); decorate(document);
+    try { sfxClick(); } catch (_) {}
+  }
+
+  /* ---------- 2) زر المشاركة على بطاقة كل محاضرة ---------- */
+  function decorate(root) {
+    (root || document).querySelectorAll('.lecture-card[id^="card-"]').forEach((card) => {
+      const id = card.id.slice(5), h = card.querySelector(".lecture-header"); if (!h) return;
+      const old = card.querySelector(".lec-tools"); if (old) old.remove();
+      const d = document.createElement("div"); d.className = "lec-tools";
+      d.innerHTML = '<button type="button" class="btn-share" data-share="' + escapeHtml(id) + '">🔗 مشاركة</button>' + (isFav(id) ? '<span class="lec-fav-tag">❤️ في المفضلة</span>' : "");
+      h.insertAdjacentElement("afterend", d);
+    });
+  }
+  document.addEventListener("click", (e) => { const b = e.target.closest("[data-share]"); if (b) { e.preventDefault(); shareLecture(b.dataset.share); } });
+  async function shareLecture(id) {
+    const l = lectureIndex[id], title = l ? l.title : "محاضرة";
+    const url = location.href.split(/[?#]/)[0] + "?lecture=" + encodeURIComponent(id); // الرابط يحتوي رقم المحاضرة فقط (لا يكشف رابط الفيديو)
+    try { if (navigator.share) { await navigator.share({ title: title, text: "محاضرة: " + title + " — منصة الشافعي الصغير", url: url }); return; } }
+    catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.clipboard.writeText(url); toast("🔗 تم نسخ رابط المحاضرة"); }
+    catch (_) { prompt("انسخ رابط المحاضرة:", url); }
+  }
+
+  /* ---------- 3) فتح الرابط المشارَك مع التحقق من الدخول والاشتراك ---------- */
+  let pending = null, state = "wait", readyAt = 0;
+  try {
+    const q = new URLSearchParams(location.search).get("lecture"), m = /[#&]lecture=([^&]+)/.exec(location.hash);
+    pending = q || (m ? decodeURIComponent(m[1]) : null) || sessionStorage.getItem(DL_KEY);
+    if (q || m) { sessionStorage.setItem(DL_KEY, pending); history.replaceState(null, "", location.href.split(/[?#]/)[0]); }
+  } catch (_) {}
+  function finish() { pending = null; try { sessionStorage.removeItem(DL_KEY); } catch (_) {} const n = $("deepNotice"); if (n) n.remove(); }
+  function showNotice() {
+    if ($("deepNotice")) return; const f = $("authForm"); if (!f) return;
+    f.insertAdjacentHTML("afterbegin", '<div class="deep-notice" id="deepNotice">🔒 سجّل الدخول (أو أنشئ حساباً) ثم اشترك في الكورس لمشاهدة المحاضرة المشاركة</div>');
+  }
+  function goTo(l, cid) {
+    currentCourse = cid; activatingCourse = cid;
+    setView("course");
+    const card = SUBJECT_CARDS.find((c) => (c.subjects || []).includes(l.subject) && (!c.courses || c.courses.includes(cid)));
+    if (card) openSubject(card.tab);
+    setTimeout(() => {
+      const el = $("card-" + l.id); if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("deep-hl"); setTimeout(() => el.classList.remove("deep-hl"), 4000);
+    }, 450);
+  }
+  function step() {
+    if (!pending) return;
+    if (!currentStudent) { showNotice(); return; }              // غير مسجّل: نافذة الدخول تبقى مفتوحة ولا يُفتح شيء
+    if (!readyAt) readyAt = Date.now();
+    const id = pending, l = lectureIndex[id];
+    if (!l) {
+      const age = Date.now() - readyAt;
+      if ((lastFetchAt > 0 && age > 3000) || age > 20000) { toast("⚠️ هذه المحاضرة غير متاحة حالياً أو لم يحن موعدها بعد"); finish(); }
+      return;
+    }
+    const cs = (l.courses && l.courses.length) ? l.courses : COURSES.filter((c) => !STRICT_COURSES.includes(c.id)).map((c) => c.id);
+    const ok = (cid) => { const c = COURSES.find((x) => x.id === cid); return !!c && (isAdminUser() || c.isActive(currentStudent)); };
+    const cid = cs.find(ok) || cs.find((x) => COURSES.some((c) => c.id === x)) || COURSES[0].id;
+    const c = COURSES.find((x) => x.id === cid), subscribed = ok(cid);
+    if (!subscribed) {
+      if (state === "blocked") return;                          // سبق التنبيه؛ ننتظر اشتراكه
+      state = "blocked"; goTo(l, cid);
+      if (c && c.free) openFreeSub(cid); else requireSubscription();
+      return;
+    }
+    if (SUBS_ON() && (subsFor !== currentStudent.phone || subsLoading)) return; // انتظر تحميل اشتراكات المحاضرات
+    goTo(l, cid); finish();
+    const S = SUBS_ON() ? subState(id) : { st: "active" };
+    if (S.st === "active") openLectureById(id);                 // مشترك: تُفتح المحاضرة مباشرة
+    else toast("✅ وصلنا للمحاضرة — اضغط زر الاشتراك / إعادة الفتح أسفلها للمشاهدة");
+  }
+  setInterval(() => { try { step(); } catch (e) { console.error("deeplink", e); } }, 800);
+
+  /* ---------- ربط الدوال الموجودة بدون تعديل كودك الأصلي ---------- */
+  const _lec = window.openLectureById;
+  window.openLectureById = function (id) { curId = id; return _lec.apply(this, arguments); };
+  const _opp = window.openProtectedPlayer;
+  window.openProtectedPlayer = function () { ensureHeart(); const r = _opp.apply(this, arguments); paintHeart(); return r; };
+  const _cpp = window.closeProtectedPlayer;
+  window.closeProtectedPlayer = function () { curId = null; return _cpp.apply(this, arguments); };
+  const _rl = window.renderLectures;
+  window.renderLectures = function (list, containerId) { const r = _rl.apply(this, arguments); try { decorate($(containerId)); } catch (e) { console.error("share", e); } return r; };
+})();
+</script>
 </body>
 </html>
