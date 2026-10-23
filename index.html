@@ -1611,8 +1611,9 @@
     .pvx-btn.pvx-fav svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
     .pvx-btn.pvx-fav.on { color: #ff5a6e; }
     .pvx-btn.pvx-fav.on svg { fill: currentColor; }
-    .pvx-fs .pvx-i-shrink, .pvx-fs.on .pvx-i-expand { display: none; }
-    .pvx-fs.on .pvx-i-shrink { display: block; }
+    .pvx-fs svg { display: none; }
+    .pvx-fs[data-st="0"] .pvx-i-expand, .pvx-fs[data-st="1"] .pvx-i-fill, .pvx-fs[data-st="2"] .pvx-i-shrink { display: block; }
+    .pvx-fs[data-st="2"] { color: #f4e285; background: rgba(212,175,55,.25); }
     .pvx-menu {
       position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 30;
       min-width: 116px; padding: 5px; border-radius: 12px; overflow-y: auto; overscroll-behavior: contain;
@@ -1662,6 +1663,13 @@
     @media (prefers-reduced-motion: reduce) { .pv-act, .pvx-btn { transition: none; } }
     @media (orientation: landscape) and (max-height: 520px) { #pvOverlay .pv-card.pv-side .pv-below { padding-top: 52px; } }
     .pvx-stage { touch-action: manipulation; }
+    #pvFullBtn { display: none; } /* زر ملء الشاشة الأساسي صار داخل شريط المشغل */
+    .pv-video-container.pvx-ovl .pvx-bar {
+      position: absolute; left: 0; right: 0; bottom: 0; border-top: 0; transition: opacity .25s;
+      background: linear-gradient(to top, rgba(4,18,10,.92), rgba(4,18,10,.6));
+    }
+    #pvOverlay.pv-idle .pvx-bar, #pvOverlay.pv-idle .pv-close-btn { opacity: 0; pointer-events: none; }
+    #pvOverlay .pv-close-btn { transition: opacity .25s; }
     .pvx-fx { position: absolute; z-index: 6; pointer-events: none; opacity: 0; transition: opacity .18s; padding: 7px 14px; border-radius: 999px;
       background: rgba(0,0,0,.62); color: #f4e285; font-weight: 800; font-size: 15px; white-space: nowrap; direction: rtl; }
     .pvx-fx.show { opacity: 1; }
@@ -1943,7 +1951,7 @@
   <div class="pv-overlay" id="pvOverlay">
     <div class="pv-card">
       <button type="button" class="pv-close-btn" onclick="closeProtectedPlayer()" title="إغلاق">✕</button>
-      <button type="button" class="pv-full-btn" id="pvFullBtn" onclick="pvSetFull(!pvFull, true)" title="ملء الشاشة">⛶</button>
+      <button type="button" class="pv-full-btn" id="pvFullBtn" onclick="pvUserFull()" title="ملء الشاشة">⛶</button>
       <div class="pv-brand">
         <div class="pv-brand-title">منصة الشافعي الصغير</div>
         <div class="pv-brand-sub">إعداد أ. أبو بكر الشافعي</div>
@@ -3103,7 +3111,7 @@
       if (cardW <= 0 || cardH <= 0) return;
       // شريط التحكم المخصص (تحت الفيديو) يُحسب ضمن الصندوق فتفضل مساحة الفيديو نفسها 16:9
       const pvxBar = box.querySelector(".pvx-bar");
-      const barH = pvxBar ? (pvxBar.offsetHeight || 46) : 0;
+      const barH = (pvxBar && !pvFull) ? (pvxBar.offsetHeight || 46) : 0;
       // شاشة عريضة (كمبيوتر / تابلت أو موبايل أفقي): الفيديو يمين واللوحة (الواجب والتعليقات) على الشمال بطول الشاشة
       const side = !pvFull && cardW > cardH && cardW >= 640;
       card.classList.toggle("pv-side", side);
@@ -3114,6 +3122,7 @@
         if (availH <= 0) return;
         w = availW; h = (w * 9) / 16 + barH;
         if (h > availH) { h = availH; w = ((h - barH) * 16) / 9; }
+        if (pvFull && pvFill) { w = availW; h = availH; } // تكبير لملء العرض: الصندوق يملأ الشاشة والفيديو بيتقص جوّاه
       } else {
         // شاشة رأسية: الفيديو بعرض الشاشة وبحد أقصى لارتفاعه، وتحته اللوحة
         const cap = Math.floor(cardH * 0.56);
@@ -3123,7 +3132,9 @@
       }
       box.style.width = Math.floor(w) + "px";
       box.style.height = Math.floor(h) + "px";
-      box.classList.toggle("pvx-narrow", w < 520); // الفيديو ضيق: نخفي شريط الصوت ونوفر مساحة للأزرار
+      box.classList.toggle("pvx-narrow", w < 520);
+      box.classList.toggle("pvx-ovl", pvFull); // وضع الفيديو فقط: شريط التحكم فوق الفيديو ويختفي تلقائياً
+      pvApplyFill(); // الفيديو ضيق: نخفي شريط الصوت ونوفر مساحة للأزرار
     }
  
     // نأجّل إعادة الحساب لأول فريم متاح فقط، حتى لو الشاشة بتطلق أحداث resize كتير ورا بعض
@@ -3167,7 +3178,7 @@
       ov.classList.toggle("pv-full", pvFull);
       const btn = document.getElementById("pvFullBtn");
       if (btn) { btn.textContent = pvFull ? "🗗" : "⛶"; btn.title = pvFull ? "تصغير" : "ملء الشاشة"; }
-      document.querySelectorAll(".pvx-fs").forEach((b) => { b.classList.toggle("on", pvFull); b.title = pvFull ? "تصغير" : "ملء الشاشة"; b.setAttribute("aria-label", b.title); });
+
       if (pvFull) {
         const el = document.documentElement;
         const req = el.requestFullscreen || el.webkitRequestFullscreen;
@@ -3186,13 +3197,48 @@
       pvApplyOrientation();
       setTimeout(pvApplyOrientation, 300);
     }
-    function pvOnViewportChange() { if (pvIsOpen()) pvApplyOrientation(); }
+    // ===== تعرّف تلقائي على الجهاز: الموبايل لو اتقلب أفقياً يدخل وضع الفيديو بملء الشاشة، ولو رجع رأسي يرجع للوحة =====
+    let pvManual = false, pvAutoEntered = false;
+    const pvIsPhone = () => { try { return Math.min(window.innerWidth, window.innerHeight) < 600 && window.matchMedia("(pointer: coarse)").matches; } catch (_) { return false; } };
+    function pvAutoMode() {
+      if (!pvIsOpen() || pvManual || !pvIsPhone()) return;
+      const land = window.innerWidth > window.innerHeight;
+      if (land && !pvFull) { pvAutoEntered = true; pvFill = true; pvSetFull(true, true); }
+      else if (!land && pvFull && pvAutoEntered) { pvAutoEntered = false; pvSetFull(false, true); }
+    }
+    // زرار واحد: ضغطة واحدة = ملء الشاشة + تكبير الفيديو لملء العرض معاً، وضغطة تانية = رجوع للتخطيط العادي. ضغطة الطالب بنفسه تلغي الوضع التلقائي
+    function pvUserFull() {
+      pvManual = true;
+      if (!pvFull) { pvFill = true; pvSetFull(true, true); }
+      else { pvFill = false; pvSetFull(false, true); }
+    }
+    const PV_FS_TITLES = ["ملء الشاشة", "تكبير لملء العرض", "تصغير"];
+    // تكبير الفيديو ليملأ عرض الشاشة بالكامل (بيقص جزء بسيط من الأعلى والأسفل لو الشاشة أعرض من 16:9)
+    let pvFill = (() => { try { return localStorage.getItem("pv_fill") === "1"; } catch (_) { return false; } })();
+    function pvApplyFill() {
+      const stt = !pvFull ? 0 : (pvFill ? 2 : 1);
+      document.querySelectorAll(".pvx-fs").forEach((b) => { b.dataset.st = stt; b.title = PV_FS_TITLES[stt]; b.setAttribute("aria-label", PV_FS_TITLES[stt]); });
+      const st = document.querySelector("#pvVideoBox .pvx-stage"); if (!st) return;
+      const fr = st.querySelector("iframe"); if (!fr) return;
+      if (!(pvFill && pvFull)) { ["inset", "left", "top", "width", "height", "transform"].forEach((k) => { fr.style[k] = ""; }); return; }
+      const sw = st.clientWidth, sh = st.clientHeight; if (sw <= 0 || sh <= 0) return;
+      let w = sw, h = (sw * 9) / 16; if (h < sh) { h = sh; w = (sh * 16) / 9; }
+      fr.style.inset = "auto"; fr.style.left = "50%"; fr.style.top = "50%";
+      fr.style.width = Math.ceil(w) + "px"; fr.style.height = Math.ceil(h) + "px"; fr.style.transform = "translate(-50%,-50%)";
+    }
+    function pvToggleFill() {
+      pvFill = !pvFill;
+      try { localStorage.setItem("pv_fill", pvFill ? "1" : "0"); } catch (_) {}
+      pvFitLayout();
+      try { showNotifToast(pvFill ? "تم تكبير الفيديو لملء العرض (قد يُقصّ جزء بسيط من الأعلى والأسفل)" : "عرض الفيديو كاملاً بدون قص", "system"); } catch (_) {}
+    }
+    function pvOnViewportChange() { if (pvIsOpen()) { pvAutoMode(); pvApplyOrientation(); } }
     window.addEventListener("resize", pvOnViewportChange, { passive: true });
     window.addEventListener("orientationchange", () => { setTimeout(pvOnViewportChange, 120); setTimeout(pvOnViewportChange, 450); });
     if (window.visualViewport) window.visualViewport.addEventListener("resize", pvOnViewportChange);
     if (window.ResizeObserver) { try { new ResizeObserver(() => { if (pvIsOpen()) pvScheduleFit(); }).observe(document.getElementById("pvVideoWrap")); } catch (_) {} }
     ["fullscreenchange", "webkitfullscreenchange"].forEach((ev) => document.addEventListener(ev, () => {
-      if (pvFull && pvUsedNative && !pvFsEl()) pvSetFull(false); // الطالب خرج من ملء الشاشة بزرار الرجوع/Esc
+      if (pvFull && pvUsedNative && !pvFsEl()) { pvManual = true; pvSetFull(false); } // الطالب خرج من ملء الشاشة بزرار الرجوع/Esc
       else pvOnViewportChange();
     }));
  
@@ -3439,6 +3485,11 @@
         </div>
       </div>
       <div class="pvx-bar">
+        <button type="button" class="pvx-btn pvx-fs" data-st="0" aria-label="ملء الشاشة" title="ملء الشاشة" onclick="pvUserFull()">
+          <svg class="pvx-i-expand" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          <svg class="pvx-i-fill" viewBox="0 0 24 24"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg>
+          <svg class="pvx-i-shrink" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+        </button>
         <button type="button" class="pvx-btn pvx-play" aria-label="تشغيل" title="تشغيل / إيقاف مؤقت">
           <svg class="pvx-i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pvx-i-pause" viewBox="0 0 24 24" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
@@ -3461,10 +3512,6 @@
           <svg class="pvx-i-mute" viewBox="0 0 24 24" hidden><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
         </button>
         <input type="range" class="pvx-range pvx-vol" min="0" max="100" step="1" value="100" aria-label="مستوى الصوت">
-        <button type="button" class="pvx-btn pvx-fs" aria-label="ملء الشاشة" title="ملء الشاشة" onclick="pvSetFull(!pvFull, true)">
-          <svg class="pvx-i-expand" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          <svg class="pvx-i-shrink" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
-        </button>
       </div>`;
 
     function pvxFmt(sec) {
@@ -3486,7 +3533,7 @@
       };
       const handlers = {};
       let yt = null, ready = false, destroyed = false, state = -1, started = false, dragging = false;
-      let autoplay = true, pendingSeek = null, metaDone = false, lastT = -1, cacheT = 0, cacheD = 0, ticker = null, qTick = 0;
+      let autoplay = true, pendingSeek = null, metaDone = false, lastT = -1, cacheT = 0, cacheD = 0, ticker = null, qTick = 0, lastAct = Date.now();
 
       const emit = (ev) => (handlers[ev] || []).slice().forEach((fn) => { try { fn({ detail: {} }); } catch (e) { console.error(e); } });
       const setFill = (el, pct) => el.style.setProperty("--fill", pct + "%");
@@ -3519,6 +3566,10 @@
         if (!ready || destroyed) return;
         const t = curTime(), d = curDur();
         checkMeta();
+        { // وضع الفيديو فقط: الشريط وزر الإغلاق يختفوا بعد 3 ثواني من التشغيل بدون لمس
+          const ovl = document.getElementById("pvOverlay");
+          if (ovl) ovl.classList.toggle("pv-idle", pvFull && state === S.PLAYING && Date.now() - lastAct > 3000 && ui.speedMenu.hidden && ui.qMenu.hidden);
+        }
         if (++qTick % 8 === 0) { syncQUI(); syncSpeedUI(); } // كل ~ثانيتين: تحديث تسمية السرعة والجودة الفعلية
         if (!dragging) {
           const pct = d ? Math.min(100, (t / d) * 100) : 0;
@@ -3577,7 +3628,7 @@
         destroy() {
           if (destroyed) return;
           curTime(); curDur(); // نحتفظ بآخر قيمة قبل الإغلاق
-          destroyed = true; clearInterval(ticker); try { document.removeEventListener("click", closeMenus); document.removeEventListener("keydown", onKey); } catch (_) {}
+          destroyed = true; clearInterval(ticker); try { document.removeEventListener("click", closeMenus); document.removeEventListener("keydown", onKey); const o2 = document.getElementById("pvOverlay"); if (o2) { o2.classList.remove("pv-idle"); ["pointerdown", "pointermove", "touchstart"].forEach((ev) => o2.removeEventListener(ev, act, true)); } } catch (_) {}
           try { if (yt && yt.destroy) yt.destroy(); } catch (_) {}
           yt = null; ready = false;
           Object.keys(handlers).forEach((k) => delete handlers[k]);
@@ -3709,7 +3760,11 @@
         if (d.long) { lpEnd(); return; }
         if (d.moved || e.type !== "pointerup") return;
         const side = sideOf(e.clientX, e.clientY), now = Date.now();
-        if (!side) { lastTap = { t: 0, side: "" }; return; }
+        if (!side) { // ضغطة واحدة في النص = تشغيل / إيقاف
+          lastTap = { t: 0, side: "" };
+          const wasPaused = api.paused; api.togglePlay(); flash(fx.h, wasPaused ? "▶" : "⏸");
+          return;
+        }
         if (lastTap.side === side && (now - lastTap.t < 320 || now < chainUntil)) { seekBy(side === "r" ? SEEK_STEP : -SEEK_STEP); chainUntil = now + 450; }
         else chainUntil = 0;
         lastTap = { t: now, side: side };
@@ -3718,6 +3773,7 @@
       // الكيبورد (كمبيوتر): مسافة = تشغيل/إيقاف، ←/→ = ±15 ثانية، ↑/↓ = الصوت
       function onKey(e) {
         if (destroyed || !ready || e.ctrlKey || e.metaKey || e.altKey) return;
+        lastAct = Date.now(); { const o = document.getElementById("pvOverlay"); if (o) o.classList.remove("pv-idle"); }
         const ov = document.getElementById("pvOverlay"); if (!ov || !ov.classList.contains("active")) return;
         const t = e.target;
         if (t && (t.isContentEditable || (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && t.type !== "range"))) return;
@@ -3738,6 +3794,10 @@
         }
       }
       document.addEventListener("keydown", onKey);
+      const ovEl = document.getElementById("pvOverlay");
+      const act = () => { lastAct = Date.now(); if (ovEl) ovEl.classList.remove("pv-idle"); };
+      const ACT_EVS = ["pointerdown", "pointermove", "touchstart"];
+      if (ovEl) ACT_EVS.forEach((ev) => ovEl.addEventListener(ev, act, true));
 
       // ----- أزرار شريط التحكم -----
       ui.play.addEventListener("click", () => api.togglePlay());
@@ -3791,7 +3851,7 @@
         ui.seek.disabled = false;
         if (pendingSeek != null) { try { yt.seekTo(pendingSeek, true); } catch (_) {} pendingSeek = null; }
         syncVolUI(); tick(true);
-        buildSpeedMenu(); applySavedSpeed(); syncQUI();
+        buildSpeedMenu(); applySavedSpeed(); syncQUI(); try { pvApplyFill(); } catch (_) {}
         emit("ready");
         if (autoplay) { try { yt.playVideo(); } catch (_) {} }
         setTimeout(() => { if (!started) ui.poster.classList.remove("busy"); }, 1500); // لو التشغيل التلقائي اتمنع، الطالب يضغط ▶
@@ -7253,9 +7313,10 @@ start();
   window.pvBelowOpen = function () {
     if (below) below.scrollTop = 0;
     hwRender(); cmInit(); autoFullscreen();
-    requestAnimationFrame(() => { try { pvFitLayout(); } catch (_) {} });
+    try { pvManual = false; pvAutoEntered = false; } catch (_) {}
+    requestAnimationFrame(() => { try { pvAutoMode(); pvFitLayout(); } catch (_) {} });
   };
-  window.pvBelowClose = function () { clearInterval(timer); timer = null; seq++; list = []; };
+  window.pvBelowClose = function () { try { pvManual = false; pvAutoEntered = false; } catch (_) {} clearInterval(timer); timer = null; seq++; list = []; };
 
   // الواجب في اللوحة والواجب خارج المحاضرة مربوطان: أي تغيير في علامات الإنجاز أو نتيجة الاختبار يحدّث الاثنين
   const _mid = window.markItemDone;
