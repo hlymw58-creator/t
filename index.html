@@ -1005,41 +1005,6 @@
     .lecture-card { content-visibility: auto; contain-intrinsic-size: 1px 220px; }
     .pv-video-container video { pointer-events: none; }
     .pv-video-container .plyr__controls { pointer-events: auto; }
-
-    /* ===== المشغل المخصص ليوتيوب: واجهة يوتيوب مخفية بالكامل + شريط تحكم بنفس هوية المنصة ===== */
-    .pvx { position:absolute; inset:0; display:flex; flex-direction:column; background:#000; direction:rtl; font-family:inherit; }
-    .pvx [hidden] { display:none !important; }
-    .pvx-stage { position:relative; flex:1 1 0; min-height:0; background:#000; overflow:hidden; user-select:none; -webkit-user-select:none; }
-    .pvx-stage iframe { position:absolute; inset:0; width:100%; height:100%; border:0; pointer-events:none !important; }
-    .pvx-shield { position:absolute; inset:0; z-index:3; background:transparent; }
-    .pvx-poster { position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
-      background:#000 center/cover no-repeat; cursor:pointer; transition:opacity .25s; }
-    .pvx-poster.hidden { opacity:0; pointer-events:none; }
-    .pvx-big { width:60px; height:60px; border-radius:50%; background:rgba(0,0,0,.55); border:2px solid #d4af37; color:#fff; font-size:22px;
-      display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; font-family:inherit; }
-    .pvx-poster.busy .pvx-big { opacity:.55; }
-    .pvx-msg { color:#f4e285; font-weight:700; font-size:clamp(12px,3vw,16px); line-height:1.9; text-align:center; padding:0 18px; background:rgba(5,26,12,.82); border-radius:10px; }
-    .pvx-bar { flex:none; height:46px; display:flex; align-items:center; gap:10px; padding:0 10px;
-      background:linear-gradient(180deg,#0b2b1a,#06190f); border-top:1px solid rgba(212,175,55,.45); }
-    .pvx-btn { flex:none; width:34px; height:34px; display:grid; place-items:center; border:0; border-radius:50%; background:transparent; color:#d4af37; cursor:pointer; padding:0; }
-    .pvx-btn:hover { background:rgba(212,175,55,.16); }
-    .pvx-btn:active { transform:scale(.92); }
-    .pvx-btn svg { width:20px; height:20px; fill:currentColor; }
-    .pvx-btn:focus-visible, .pvx-range:focus-visible { outline:2px solid #f4e285; outline-offset:2px; }
-    .pvx-time { flex:none; direction:ltr; min-width:92px; text-align:center; font-size:12.5px; font-variant-numeric:tabular-nums; color:#cfe3d4; }
-    .pvx-time b { color:#f4e285; font-weight:700; }
-    .pvx-range { -webkit-appearance:none; appearance:none; height:18px; margin:0; background:transparent; cursor:pointer; direction:ltr; }
-    .pvx-range::-webkit-slider-runnable-track { height:5px; border-radius:3px; background:linear-gradient(to right,#d4af37 var(--fill,0%),rgba(255,255,255,.2) var(--fill,0%)); }
-    .pvx-range::-moz-range-track { height:5px; border-radius:3px; background:linear-gradient(to right,#d4af37 var(--fill,0%),rgba(255,255,255,.2) var(--fill,0%)); }
-    .pvx-range::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; margin-top:-4.5px; border-radius:50%; border:2px solid #0b2b1a; background:#f4e285; }
-    .pvx-range::-moz-range-thumb { width:12px; height:12px; border-radius:50%; border:2px solid #0b2b1a; background:#f4e285; }
-    .pvx-seek { flex:1 1 auto; min-width:0; }
-    .pvx-vol { flex:none; width:76px; }
-    @media (max-width:560px) {
-      .pvx-bar { height:42px; gap:6px; padding:0 6px; }
-      .pvx-vol { display:none; }
-      .pvx-time { min-width:80px; font-size:11.5px; }
-    }
     .pv-yt-cover { position:absolute; inset:0; z-index:2; display:none; align-items:center; justify-content:center; text-align:center; padding:18px;
       color:#f4e285; font-weight:700; font-size:clamp(13px,3.2vw,18px); line-height:1.9; pointer-events:none;
       background:linear-gradient(rgba(5,26,12,.93),rgba(5,26,12,.93)), var(--pv-thumb) center/cover #000; }
@@ -1542,144 +1507,6 @@
 [data-theme="dark"] #quran-quiz button.qq-alt{background:#2b3b31;color:#e6eee8}
 [data-theme="dark"] #quran-quiz .qq-bar{background:#2b3b31}
 </style>
-  <style id="pvNextCss">
-    /* =====================================================================
-       مشغل المحاضرة (النسخة الجديدة): لوحة ملء الشاشة بمقاس الجهاز تلقائياً
-       الفيديو بالأعلى ثابت، وتحته لوحة تتمرّر فيها (المفضلة + الواجب + التعليقات)
-       ===================================================================== */
-    #pvOverlay { padding: 0; align-items: stretch; justify-content: stretch; background: #04150d; }
-    #pvOverlay .pv-card {
-      width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none;
-      margin: 0; padding: 0; gap: 0; border: 0; border-radius: 0; overflow: hidden;
-      display: flex; flex-direction: column;
-    }
-    #pvOverlay .pv-brand { display: none; }
-    #pvOverlay .pv-title { padding: calc(10px + env(safe-area-inset-top, 0px)) 96px 10px; font-size: .95rem; }
-    #pvOverlay .pv-close-btn, #pvOverlay .pv-full-btn { top: calc(8px + env(safe-area-inset-top, 0px)); }
-    #pvOverlay .pv-close-btn { left: 10px; }
-    #pvOverlay .pv-full-btn { left: 50px; }
-    #pvOverlay .pv-hint { display: none !important; }
-    #pvOverlay .pv-video-wrap {
-      flex: none; height: auto; padding: 0; align-items: center; justify-content: center;
-      background: #000; border-bottom: 2px solid rgba(212,175,55,.55);
-    }
-    #pvOverlay:not(.pv-full) .pv-video-container { border-radius: 0; box-shadow: none; }
-    #pvOverlay.pv-full .pv-video-wrap { flex: 1 1 0; border-bottom: 0; }
-    /* شاشة عريضة: الفيديو في عمود واللوحة في عمود بطول الشاشة */
-    #pvOverlay .pv-card.pv-side { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 34vw, 420px); grid-template-rows: auto minmax(0, 1fr); }
-    #pvOverlay .pv-card.pv-side .pv-title { grid-column: 1 / -1; grid-row: 1; padding-top: calc(8px + env(safe-area-inset-top, 0px)); padding-bottom: 8px; }
-    #pvOverlay .pv-card.pv-side .pv-video-wrap { grid-column: 1; grid-row: 2; height: auto; border-bottom: 0; border-left: 2px solid rgba(212,175,55,.55); }
-    #pvOverlay .pv-card.pv-side .pv-below { grid-column: 2; grid-row: 2; }
-    #pvOverlay .pv-card.pv-side .pv-hint { display: none; }
-    .pv-video-container.pvx-narrow .pvx-vol { display: none; }
-    .pv-video-container.pvx-narrow .pvx-time { min-width: 72px; font-size: 11.5px; }
-    #pvOverlay.pv-full .pv-below { display: none; }
-
-    .pv-below {
-      flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-      padding: 12px 12px calc(18px + env(safe-area-inset-bottom, 0px));
-      display: flex; flex-direction: column; gap: 12px; direction: rtl;
-    }
-    .pv-below > * { width: 100%; max-width: 920px; margin-inline: auto; flex: none; }
-    .pv-sec { background: rgba(255,255,255,.045); border: 1px solid rgba(212,175,55,.35); border-radius: 14px; padding: 12px; color: #e9f3ec; }
-    .pv-sec[hidden] { display: none; }
-    .pv-sec-h { display: flex; align-items: center; gap: 8px; color: #f4e285; font-weight: 800; font-size: .98rem; margin-bottom: 10px; }
-    .pv-sec-h small { color: #9fb8a8; font-weight: 600; font-size: .78rem; margin-inline-start: auto; }
-    .pv-acts { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pv-act {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 8px 14px;
-      border-radius: 12px; background: #0b2b1a; color: #fff; border: 1px solid #d4af37; text-decoration: none;
-      font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; transition: transform .12s, background-color .15s;
-    }
-    .pv-act:hover { background: #12401f; }
-    .pv-act:active { transform: scale(.96); }
-    .pv-act:focus-visible, .pv-cm-ops button:focus-visible, .pvx-menu button:focus-visible { outline: 2px solid #f4e285; outline-offset: 2px; }
-    .pv-act.pv-fav.on { background: #fff; color: #c62828; border-color: #fff; }
-    .pv-act.quiz { border-color: #4dd0e1; }
-    .pv-act .pv-done { font-style: normal; font-size: .78rem; color: #8be28b; font-weight: 800; }
-    .pv-hw-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
-    .pv-hw-list .pv-act { justify-content: flex-start; }
-    .pv-empty { color: #9fb8a8; font-size: .86rem; margin: 2px 0; }
-    .pv-qz-note { grid-column: 1 / -1; font-size: .8rem; color: #cfe3d4; }
-    .pv-qz-note.ok { color: #8be28b; }
-    .pv-qz-note.bad { color: #ffb74d; }
-
-    /* ---- أزرار السرعة والجودة والمفضلة داخل شريط المشغل ---- */
-    .pvx-bar { position: relative; z-index: 12; }
-    .pvx-pop { position: relative; flex: none; }
-    .pvx-btn.pvx-txt { width: auto; min-width: 34px; padding: 0 9px; border-radius: 17px; font: inherit; font-weight: 800; font-size: 12.5px; white-space: nowrap; }
-    .pvx-btn.pvx-fav svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
-    .pvx-btn.pvx-fav.on { color: #ff5a6e; }
-    .pvx-btn.pvx-fav.on svg { fill: currentColor; }
-    .pvx-fs svg { display: none; }
-    .pvx-fs[data-st="0"] .pvx-i-expand, .pvx-fs[data-st="1"] .pvx-i-fill, .pvx-fs[data-st="2"] .pvx-i-shrink { display: block; }
-    .pvx-fs[data-st="2"] { color: #f4e285; background: rgba(212,175,55,.25); }
-    .pvx-menu {
-      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 30;
-      min-width: 116px; padding: 5px; border-radius: 12px; overflow-y: auto; overscroll-behavior: contain;
-      background: rgba(6,25,15,.97); border: 1px solid rgba(212,175,55,.6); box-shadow: 0 8px 22px rgba(0,0,0,.55);
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
-    }
-    .pvx-menu button {
-      border: 0; border-radius: 8px; background: transparent; color: #e9f3ec; padding: 7px 8px; min-height: 32px;
-      font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: center; white-space: nowrap;
-    }
-    .pvx-menu button:hover { background: rgba(212,175,55,.2); }
-    .pvx-menu button.on { background: #d4af37; color: #1a1400; }
-    .pvx-q-menu { min-width: 150px; }
-    .pvx-q-menu button[data-q="0"] { grid-column: 1 / -1; }
-    @media (max-width: 560px) {
-      .pvx-bar { gap: 4px; padding: 0 4px; }
-      .pvx-btn.pvx-txt { padding: 0 6px; font-size: 11.5px; }
-      .pvx-btn { width: 30px; }
-      .pvx-time { min-width: 72px; font-size: 11px; }
-    }
-
-    /* ---- التعليقات ---- */
-    .pv-cm-form textarea {
-      width: 100%; min-height: 66px; resize: vertical; box-sizing: border-box; padding: 10px 12px; border-radius: 12px;
-      border: 1px solid rgba(212,175,55,.5); background: rgba(0,0,0,.35); color: #fff; font: inherit; font-size: .92rem; line-height: 1.7;
-    }
-    .pv-cm-form textarea:focus { outline: 2px solid #f4e285; outline-offset: 1px; }
-    .pv-cm-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-    .pv-cm-row small { color: #9fb8a8; font-size: .76rem; line-height: 1.6; flex: 1; }
-    .pv-cm-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
-    .pv-cm { background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.09); border-radius: 12px; padding: 10px 12px; }
-    .pv-cm.rep { margin: 8px 18px 0 0; background: rgba(46,125,50,.16); border-color: rgba(46,125,50,.5); }
-    .pv-cm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .85rem; }
-    .pv-cm-h b { color: #fff; }
-    .pv-cm-t { color: #8aa596; font-size: .74rem; margin-inline-start: auto; }
-    .pv-cm-b { margin-top: 6px; color: #e9f3ec; line-height: 1.8; font-size: .9rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .pv-badge { font-size: .7rem; font-weight: 800; padding: 1px 8px; border-radius: 999px; }
-    .pv-badge.adm { background: #d4af37; color: #1a1400; }
-    .pv-badge.yt { background: #c62828; color: #fff; }
-    .pv-cm-ops { display: flex; gap: 6px; margin-top: 8px; }
-    .pv-cm-ops button { background: transparent; border: 1px solid rgba(255,255,255,.22); color: #cfe3d4; border-radius: 8px; padding: 4px 10px; font: inherit; font-size: .78rem; cursor: pointer; }
-    .pv-cm-ops button:hover { background: rgba(255,255,255,.08); }
-    .pv-cm-rbox { display: flex; gap: 6px; margin-top: 8px; }
-    .pv-cm-rbox[hidden] { display: none; }
-    .pv-cm-rbox input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(212,175,55,.5); background: rgba(0,0,0,.35); color: #fff; font: inherit; font-size: .88rem; }
-    .pv-cm-state { color: #9fb8a8; font-size: .88rem; text-align: center; padding: 14px 4px; }
-    @media (prefers-reduced-motion: reduce) { .pv-act, .pvx-btn { transition: none; } }
-    @media (orientation: landscape) and (max-height: 520px) { #pvOverlay .pv-card.pv-side .pv-below { padding-top: 52px; } }
-    .pvx-stage { touch-action: manipulation; }
-    #pvFullBtn { display: none; } /* زر ملء الشاشة الأساسي صار داخل شريط المشغل */
-    .pv-video-container.pvx-ovl .pvx-bar {
-      position: absolute; left: 0; right: 0; bottom: 0; border-top: 0; transition: opacity .25s;
-      background: linear-gradient(to top, rgba(4,18,10,.92), rgba(4,18,10,.6));
-    }
-    #pvOverlay.pv-idle .pvx-bar, #pvOverlay.pv-idle .pv-close-btn { opacity: 0; pointer-events: none; }
-    #pvOverlay .pv-close-btn { transition: opacity .25s; }
-    .pvx-fx { position: absolute; z-index: 6; pointer-events: none; opacity: 0; transition: opacity .18s; padding: 7px 14px; border-radius: 999px;
-      background: rgba(0,0,0,.62); color: #f4e285; font-weight: 800; font-size: 15px; white-space: nowrap; direction: rtl; }
-    .pvx-fx.show { opacity: 1; }
-    .pvx-fx-r { right: 10%; top: 50%; transform: translateY(-50%); }
-    .pvx-fx-l { left: 10%; top: 50%; transform: translateY(-50%); }
-    .pvx-fx-h { top: 12px; left: 50%; transform: translateX(-50%); }
-    #pvBelow .trk-pbar, #pvBelow .trk-ask { display: block; }
-    #pvBelow .trk-pbar { padding: 2px 4px; }
-    .trk-q { display: none !important; }
-  </style>
 </head>
 <body>
 <div id="hlIntro" aria-hidden="true">
@@ -1951,7 +1778,7 @@
   <div class="pv-overlay" id="pvOverlay">
     <div class="pv-card">
       <button type="button" class="pv-close-btn" onclick="closeProtectedPlayer()" title="إغلاق">✕</button>
-      <button type="button" class="pv-full-btn" id="pvFullBtn" onclick="pvUserFull()" title="ملء الشاشة">⛶</button>
+      <button type="button" class="pv-full-btn" id="pvFullBtn" onclick="pvSetFull(!pvFull)" title="ملء الشاشة">⛶</button>
       <div class="pv-brand">
         <div class="pv-brand-title">منصة الشافعي الصغير</div>
         <div class="pv-brand-sub">إعداد أ. أبو بكر الشافعي</div>
@@ -1974,18 +1801,14 @@
           <div id="pvPlayer"></div>
         </div>
       </div>
-      <div class="pv-hint"></div>
-      <div class="pv-below" id="pvBelow">
-        <section class="pv-sec" id="pvHwPane" aria-label="المفضلة والواجب والملفات" hidden></section>
-        <section class="pv-sec" id="pvCmPane" aria-label="التعليقات"></section>
-        <div class="pv-support-row">
-          <a href="https://wa.me/201099442329" target="_blank" class="pv-support-btn tech">
-            🎧 <span>الدعم الفني<span class="pv-phone">01099442329</span></span>
-          </a>
-          <a href="https://wa.me/201101662590" target="_blank" class="pv-support-btn academic">
-            💬 <span>واتساب المستر<span class="pv-phone">01101662590</span></span>
-          </a>
-        </div>
+      <div class="pv-hint">💡 لمشاهدة أكبر اضغط زر ⛶ في الأعلى ثم اقلب الجهاز أفقياً</div>
+      <div class="pv-support-row">
+        <a href="https://wa.me/201099442329" target="_blank" class="pv-support-btn tech">
+          🎧 <span>الدعم الفني<span class="pv-phone">01099442329</span></span>
+        </a>
+        <a href="https://wa.me/201101662590" target="_blank" class="pv-support-btn academic">
+          💬 <span>واتساب المستر<span class="pv-phone">01101662590</span></span>
+        </a>
       </div>
     </div>
   </div>
@@ -2089,8 +1912,6 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOxTAIi0vg-ljJYn95vaox2qRSC7fBdgvlIGebURXTGK6YPEP1CWRO9LwDwTspKTb6/exec";
     const FORUM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweDp9aFadfcGln2fprx1OGOg9ap1wWaDWJXfmb8JUwHRqMrL8GucM3sM_pRiAfkuKI/exec";
-    // رابط سكريبت التعليقات (Comments.gs بعد نشره Web App). اتركه فارغاً لإخفاء ميزة التعليقات.
-    const COMMENTS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNRfURDe05cA8XEWACWPrO-6XDkYgehbY1WUQVZdwCpMguqPb7q-Vb-vXQkPsg-IYu/exec";
     // رابط تطبيق الويب الخاص بإدارة المحاضرات (ألصقه هنا بعد النشر)
     // ضع هنا رابط سكريبت الاشتراكات الجديد (Subscriptions.gs) بعد نشره. اتركه فارغاً لتعطيل نظام الاشتراك.
     const SUBS_SCRIPT_URL = "";
@@ -3105,36 +2926,19 @@
     function pvFitLayout() {
       const wrap = document.getElementById("pvVideoWrap");
       const box = document.getElementById("pvVideoBox");
-      const card = document.querySelector("#pvOverlay .pv-card");
-      if (!wrap || !box || !card) return;
-      const cardW = card.clientWidth, cardH = card.clientHeight;
-      if (cardW <= 0 || cardH <= 0) return;
-      // شريط التحكم المخصص (تحت الفيديو) يُحسب ضمن الصندوق فتفضل مساحة الفيديو نفسها 16:9
-      const pvxBar = box.querySelector(".pvx-bar");
-      const barH = (pvxBar && !pvFull) ? (pvxBar.offsetHeight || 46) : 0;
-      // شاشة عريضة (كمبيوتر / تابلت أو موبايل أفقي): الفيديو يمين واللوحة (الواجب والتعليقات) على الشمال بطول الشاشة
-      const side = !pvFull && cardW > cardH && cardW >= 640;
-      card.classList.toggle("pv-side", side);
-      let w, h;
-      if (pvFull || side) {
-        wrap.style.height = "";
-        const availW = wrap.clientWidth || cardW, availH = wrap.clientHeight;
-        if (availH <= 0) return;
-        w = availW; h = (w * 9) / 16 + barH;
-        if (h > availH) { h = availH; w = ((h - barH) * 16) / 9; }
-        if (pvFull && pvFill) { w = availW; h = availH; } // تكبير لملء العرض: الصندوق يملأ الشاشة والفيديو بيتقص جوّاه
-      } else {
-        // شاشة رأسية: الفيديو بعرض الشاشة وبحد أقصى لارتفاعه، وتحته اللوحة
-        const cap = Math.floor(cardH * 0.56);
-        w = cardW; h = (w * 9) / 16 + barH;
-        if (h > cap) { h = cap; w = ((h - barH) * 16) / 9; }
-        wrap.style.height = Math.floor(h) + "px";
+      if (!wrap || !box) return;
+      const availW = wrap.clientWidth;
+      const availH = wrap.clientHeight;
+      if (availW <= 0 || availH <= 0) return;
+ 
+      let w = availW;
+      let h = (w * 9) / 16;
+      if (h > availH) {
+        h = availH;
+        w = (h * 16) / 9;
       }
       box.style.width = Math.floor(w) + "px";
       box.style.height = Math.floor(h) + "px";
-      box.classList.toggle("pvx-narrow", w < 520);
-      box.classList.toggle("pvx-ovl", pvFull); // وضع الفيديو فقط: شريط التحكم فوق الفيديو ويختفي تلقائياً
-      pvApplyFill(); // الفيديو ضيق: نخفي شريط الصوت ونوفر مساحة للأزرار
     }
  
     // نأجّل إعادة الحساب لأول فريم متاح فقط، حتى لو الشاشة بتطلق أحداث resize كتير ورا بعض
@@ -3172,13 +2976,12 @@
     function pvLockLandscape() {
       try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {}); } catch (_) {}
     }
-    function pvSetFull(on, keepNative) {
+    function pvSetFull(on) {
       pvFull = !!on;
       const ov = document.getElementById("pvOverlay");
       ov.classList.toggle("pv-full", pvFull);
       const btn = document.getElementById("pvFullBtn");
       if (btn) { btn.textContent = pvFull ? "🗗" : "⛶"; btn.title = pvFull ? "تصغير" : "ملء الشاشة"; }
-
       if (pvFull) {
         const el = document.documentElement;
         const req = el.requestFullscreen || el.webkitRequestFullscreen;
@@ -3188,57 +2991,22 @@
             if (pr && pr.then) pr.then(() => { pvUsedNative = true; pvLockLandscape(); }).catch(() => {});
             else { pvUsedNative = true; pvLockLandscape(); }
           } catch (_) {}
-        } else if (pvFsEl()) { pvLockLandscape(); }
+        }
       } else {
         try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (_) {}
-        if (pvFsEl() && !keepNative) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (_) {} }
+        if (pvFsEl()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (_) {} }
         pvUsedNative = false;
       }
       pvApplyOrientation();
       setTimeout(pvApplyOrientation, 300);
     }
-    // ===== تعرّف تلقائي على الجهاز: الموبايل لو اتقلب أفقياً يدخل وضع الفيديو بملء الشاشة، ولو رجع رأسي يرجع للوحة =====
-    let pvManual = false, pvAutoEntered = false;
-    const pvIsPhone = () => { try { return Math.min(window.innerWidth, window.innerHeight) < 600 && window.matchMedia("(pointer: coarse)").matches; } catch (_) { return false; } };
-    function pvAutoMode() {
-      if (!pvIsOpen() || pvManual || !pvIsPhone()) return;
-      const land = window.innerWidth > window.innerHeight;
-      if (land && !pvFull) { pvAutoEntered = true; pvFill = true; pvSetFull(true, true); }
-      else if (!land && pvFull && pvAutoEntered) { pvAutoEntered = false; pvSetFull(false, true); }
-    }
-    // زرار واحد: ضغطة واحدة = ملء الشاشة + تكبير الفيديو لملء العرض معاً، وضغطة تانية = رجوع للتخطيط العادي. ضغطة الطالب بنفسه تلغي الوضع التلقائي
-    function pvUserFull() {
-      pvManual = true;
-      if (!pvFull) { pvFill = true; pvSetFull(true, true); }
-      else { pvFill = false; pvSetFull(false, true); }
-    }
-    const PV_FS_TITLES = ["ملء الشاشة", "تكبير لملء العرض", "تصغير"];
-    // تكبير الفيديو ليملأ عرض الشاشة بالكامل (بيقص جزء بسيط من الأعلى والأسفل لو الشاشة أعرض من 16:9)
-    let pvFill = (() => { try { return localStorage.getItem("pv_fill") === "1"; } catch (_) { return false; } })();
-    function pvApplyFill() {
-      const stt = !pvFull ? 0 : (pvFill ? 2 : 1);
-      document.querySelectorAll(".pvx-fs").forEach((b) => { b.dataset.st = stt; b.title = PV_FS_TITLES[stt]; b.setAttribute("aria-label", PV_FS_TITLES[stt]); });
-      const st = document.querySelector("#pvVideoBox .pvx-stage"); if (!st) return;
-      const fr = st.querySelector("iframe"); if (!fr) return;
-      if (!(pvFill && pvFull)) { ["inset", "left", "top", "width", "height", "transform"].forEach((k) => { fr.style[k] = ""; }); return; }
-      const sw = st.clientWidth, sh = st.clientHeight; if (sw <= 0 || sh <= 0) return;
-      let w = sw, h = (sw * 9) / 16; if (h < sh) { h = sh; w = (sh * 16) / 9; }
-      fr.style.inset = "auto"; fr.style.left = "50%"; fr.style.top = "50%";
-      fr.style.width = Math.ceil(w) + "px"; fr.style.height = Math.ceil(h) + "px"; fr.style.transform = "translate(-50%,-50%)";
-    }
-    function pvToggleFill() {
-      pvFill = !pvFill;
-      try { localStorage.setItem("pv_fill", pvFill ? "1" : "0"); } catch (_) {}
-      pvFitLayout();
-      try { showNotifToast(pvFill ? "تم تكبير الفيديو لملء العرض (قد يُقصّ جزء بسيط من الأعلى والأسفل)" : "عرض الفيديو كاملاً بدون قص", "system"); } catch (_) {}
-    }
-    function pvOnViewportChange() { if (pvIsOpen()) { pvAutoMode(); pvApplyOrientation(); } }
+    function pvOnViewportChange() { if (pvIsOpen()) pvApplyOrientation(); }
     window.addEventListener("resize", pvOnViewportChange, { passive: true });
     window.addEventListener("orientationchange", () => { setTimeout(pvOnViewportChange, 120); setTimeout(pvOnViewportChange, 450); });
     if (window.visualViewport) window.visualViewport.addEventListener("resize", pvOnViewportChange);
     if (window.ResizeObserver) { try { new ResizeObserver(() => { if (pvIsOpen()) pvScheduleFit(); }).observe(document.getElementById("pvVideoWrap")); } catch (_) {} }
     ["fullscreenchange", "webkitfullscreenchange"].forEach((ev) => document.addEventListener(ev, () => {
-      if (pvFull && pvUsedNative && !pvFsEl()) { pvManual = true; pvSetFull(false); } // الطالب خرج من ملء الشاشة بزرار الرجوع/Esc
+      if (pvFull && pvUsedNative && !pvFsEl()) pvSetFull(false); // الطالب خرج من ملء الشاشة بزرار الرجوع/Esc
       else pvOnViewportChange();
     }));
  
@@ -3246,7 +3014,6 @@
     // بدون ما يقفل نافذة المشغل نفسها
     function pvResetPlayer() {
       clearTimeout(pvYtPauseTimer);
-      { const bx = document.getElementById("pvVideoBox"); if (bx) bx.classList.remove("pvx-on"); }
       document.querySelectorAll(".pv-drive-frame,.pv-drive-shield,.pv-yt-cover,#pv-watermark").forEach((n) => n.remove());
       if (pvPlayerInstance) {
         try { pvPlayerInstance.pause(); } catch (_) {}
@@ -3333,7 +3100,6 @@
     async function pvStartPlayback() {
       const isDrive = !!pvPendingDriveId;
       if (!isDrive && !pvPendingVideoId) return;
-      if (!isDrive) { pvStartYtPlayback(); return; } // يوتيوب: المشغل المخصص (بدون Plyr)
       if (!window.Plyr) { await loadPlyr(); if (!window.Plyr) { if (isDrive) pvStartDriveIframe(); return; } }
       const videoId = pvPendingVideoId;
       const driveId = pvPendingDriveId;
@@ -3455,469 +3221,6 @@
       if (!isDrive) pvSetupYtShield(videoId, playerHost); // يوتيوب فقط: إخفاء فيديوهات يوتيوب المقترحة
     }
 
-    // ===== المشغل المخصص ليوتيوب =====
-    // بديل Plyr لفيديوهات يوتيوب: بيشغّل يوتيوب عبر IFrame API من غير أي واجهة، وبيتحكم فيه شريط تحكم خاص بالمنصة.
-    // الكائن اللي بيرجعه بيوفّر نفس دوال وأحداث Plyr اللي باقي المنصة معتمدة عليها
-    // (التتبع، الاستئناف، الجودة، فحص التركيز، درع يوتيوب) فكلها بتشتغل زي ما هي بدون أي تعديل.
-    let pvYtApiPromise = null;
-    function pvLoadYtApi() {
-      if (window.YT && window.YT.Player) return Promise.resolve();
-      if (pvYtApiPromise) return pvYtApiPromise;
-      pvYtApiPromise = new Promise((res, rej) => {
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = () => { try { if (typeof prev === "function") prev(); } catch (_) {} res(); };
-        const t = document.createElement("script");
-        t.src = "https://www.youtube.com/iframe_api";
-        t.onerror = () => { pvYtApiPromise = null; rej(new Error("yt-api")); };
-        document.head.appendChild(t);
-      });
-      return pvYtApiPromise;
-    }
-
-    const PVX_HTML = `
-      <div class="pvx-stage">
-        <div class="pvx-target"></div>
-        <div class="pvx-shield"></div>
-        <div class="pvx-fx pvx-fx-r"></div><div class="pvx-fx pvx-fx-l"></div><div class="pvx-fx pvx-fx-h"></div>
-        <div class="pvx-poster busy">
-          <button type="button" class="pvx-big" aria-label="تشغيل">▶</button>
-          <div class="pvx-msg" hidden></div>
-        </div>
-      </div>
-      <div class="pvx-bar">
-        <button type="button" class="pvx-btn pvx-fs" data-st="0" aria-label="ملء الشاشة" title="ملء الشاشة" onclick="pvUserFull()">
-          <svg class="pvx-i-expand" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          <svg class="pvx-i-fill" viewBox="0 0 24 24"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg>
-          <svg class="pvx-i-shrink" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
-        </button>
-        <button type="button" class="pvx-btn pvx-play" aria-label="تشغيل" title="تشغيل / إيقاف مؤقت">
-          <svg class="pvx-i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pvx-i-pause" viewBox="0 0 24 24" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-        </button>
-        <input type="range" class="pvx-range pvx-seek" min="0" max="1000" step="1" value="0" aria-label="شريط التقدم" disabled>
-        <div class="pvx-time"><b class="pvx-cur">0:00</b> / <span class="pvx-dur">0:00</span></div>
-        <div class="pvx-pop">
-          <button type="button" class="pvx-btn pvx-txt pvx-speed" aria-haspopup="true" aria-label="سرعة التشغيل" title="سرعة التشغيل"><span class="pvx-speed-lbl">1×</span></button>
-          <div class="pvx-menu pvx-speed-menu" hidden></div>
-        </div>
-        <div class="pvx-pop">
-          <button type="button" class="pvx-btn pvx-txt pvx-qbtn" aria-haspopup="true" aria-label="جودة الفيديو" title="جودة الفيديو"><span class="pvx-q-lbl">تلقائي</span></button>
-          <div class="pvx-menu pvx-q-menu" hidden></div>
-        </div>
-        <button type="button" class="pvx-btn pvx-fav" data-pv-fav aria-label="المفضلة" title="أضف إلى المفضلة">
-          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </button>
-        <button type="button" class="pvx-btn pvx-mute" aria-label="كتم الصوت" title="كتم / تشغيل الصوت">
-          <svg class="pvx-i-vol" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-          <svg class="pvx-i-mute" viewBox="0 0 24 24" hidden><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-        </button>
-        <input type="range" class="pvx-range pvx-vol" min="0" max="100" step="1" value="100" aria-label="مستوى الصوت">
-      </div>`;
-
-    function pvxFmt(sec) {
-      sec = Math.max(0, Math.floor(sec || 0));
-      const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = String(sec % 60).padStart(2, "0");
-      return h ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`;
-    }
-
-    function pvCreateYtPlayer(root, videoId) {
-      const S = { ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3 };
-      const q = (sel) => root.querySelector(sel);
-      const ui = {
-        stage: q(".pvx-stage"), target: q(".pvx-target"), poster: q(".pvx-poster"), big: q(".pvx-big"), msg: q(".pvx-msg"),
-        play: q(".pvx-play"), iPlay: q(".pvx-i-play"), iPause: q(".pvx-i-pause"),
-        seek: q(".pvx-seek"), cur: q(".pvx-cur"), dur: q(".pvx-dur"),
-        mute: q(".pvx-mute"), iVol: q(".pvx-i-vol"), iMute: q(".pvx-i-mute"), vol: q(".pvx-vol"),
-        speedBtn: q(".pvx-speed"), speedLbl: q(".pvx-speed-lbl"), speedMenu: q(".pvx-speed-menu"),
-        qBtn: q(".pvx-qbtn"), qLbl: q(".pvx-q-lbl"), qMenu: q(".pvx-q-menu"), fav: q(".pvx-fav")
-      };
-      const handlers = {};
-      let yt = null, ready = false, destroyed = false, state = -1, started = false, dragging = false;
-      let autoplay = true, pendingSeek = null, metaDone = false, lastT = -1, cacheT = 0, cacheD = 0, ticker = null, qTick = 0, lastAct = Date.now();
-
-      const emit = (ev) => (handlers[ev] || []).slice().forEach((fn) => { try { fn({ detail: {} }); } catch (e) { console.error(e); } });
-      const setFill = (el, pct) => el.style.setProperty("--fill", pct + "%");
-      const curTime = () => { if (ready && yt) { try { cacheT = yt.getCurrentTime() || 0; } catch (_) {} } return cacheT; };
-      const curDur = () => { if (ready && yt) { try { const d = yt.getDuration() || 0; if (d) cacheD = d; } catch (_) {} } return cacheD; };
-
-      function setPlayUI(on) {
-        ui.iPlay.hidden = on; ui.iPause.hidden = !on;
-        ui.play.setAttribute("aria-label", on ? "إيقاف مؤقت" : "تشغيل");
-      }
-      function syncVolUI() {
-        let muted = false, v = 100;
-        try { muted = yt.isMuted(); v = yt.getVolume(); } catch (_) {}
-        muted = muted || v === 0;
-        ui.iVol.hidden = muted; ui.iMute.hidden = !muted;
-        ui.mute.setAttribute("aria-label", muted ? "تشغيل الصوت" : "كتم الصوت");
-        ui.vol.value = muted ? 0 : v; setFill(ui.vol, muted ? 0 : v);
-      }
-      function showError(code) {
-        ui.poster.classList.remove("hidden", "busy");
-        ui.big.hidden = true; ui.msg.hidden = false;
-        ui.msg.textContent = code === "net"
-          ? "تعذر تحميل المشغل. تأكد من اتصال الإنترنت ثم أعد فتح المحاضرة."
-          : "تعذر تشغيل هذا الفيديو الآن. أعد فتح المحاضرة، ولو تكررت المشكلة تواصل مع الدعم الفني (كود " + code + ").";
-      }
-      function checkMeta() {
-        if (!metaDone && curDur() > 0) { metaDone = true; emit("loadedmetadata"); }
-      }
-      function tick(force) {
-        if (!ready || destroyed) return;
-        const t = curTime(), d = curDur();
-        checkMeta();
-        { // وضع الفيديو فقط: الشريط وزر الإغلاق يختفوا بعد 3 ثواني من التشغيل بدون لمس
-          const ovl = document.getElementById("pvOverlay");
-          if (ovl) ovl.classList.toggle("pv-idle", pvFull && state === S.PLAYING && Date.now() - lastAct > 3000 && ui.speedMenu.hidden && ui.qMenu.hidden);
-        }
-        if (++qTick % 8 === 0) { syncQUI(); syncSpeedUI(); } // كل ~ثانيتين: تحديث تسمية السرعة والجودة الفعلية
-        if (!dragging) {
-          const pct = d ? Math.min(100, (t / d) * 100) : 0;
-          ui.seek.value = pct * 10; setFill(ui.seek, pct);
-          ui.cur.textContent = pvxFmt(t);
-        }
-        if (d) ui.dur.textContent = pvxFmt(d);
-        if (force || state === S.PLAYING || Math.abs(t - lastT) > 0.05) { lastT = t; emit("timeupdate"); }
-      }
-
-      const api = {
-        on(ev, fn) {
-          (handlers[ev] = handlers[ev] || []).push(fn);
-          // لو الحدث حصل قبل ما حد يسمعه (التتبع بيربط بعد الإنشاء) نعيده مرة واحدة
-          if ((ev === "ready" && ready) || (ev === "loadedmetadata" && metaDone)) setTimeout(() => { if (!destroyed) { try { fn({ detail: {} }); } catch (e) { console.error(e); } } }, 0);
-          return api;
-        },
-        play() {
-          autoplay = true;
-          if (!ready || !yt) return;
-          if (state === S.ENDED) { try { yt.seekTo(0, true); } catch (_) {} }
-          try { yt.playVideo(); } catch (_) {}
-        },
-        pause() {
-          autoplay = false;
-          if (!ready || !yt) return;
-          try { yt.pauseVideo(); } catch (_) {}
-          // زي عنصر الفيديو العادي: حدث "pause" يوصل فوراً (التتبع بيحفظ آخر موضع عند الإغلاق)
-          if (state === S.PLAYING || state === S.BUFFERING) { state = S.PAUSED; setPlayUI(false); tick(true); emit("pause"); }
-        },
-        togglePlay() { api.paused ? api.play() : api.pause(); },
-        forward(n) { api.currentTime = Math.min(curDur() || 1e9, curTime() + (n || 10)); },
-        rewind(n) { api.currentTime = Math.max(0, curTime() - (n || 10)); },
-        get currentTime() { return curTime(); },
-        set currentTime(v) {
-          v = Math.max(0, +v || 0);
-          if (!ready || !yt) { pendingSeek = v; cacheT = v; return; }
-          try { yt.seekTo(v, true); } catch (_) {}
-          cacheT = v; setTimeout(() => tick(true), 120);
-        },
-        get duration() { return curDur(); },
-        get paused() { return state !== S.PLAYING && state !== S.BUFFERING; },
-        get ended() { return state === S.ENDED; },
-        get playing() { return state === S.PLAYING; },
-        get embed() { return yt; },
-        get speed() { return getSpeed(); },
-        set speed(v) { try { yt.setPlaybackRate(+v || 1); } catch (_) {} syncSpeedUI(); },
-        // الحل البديل لتغيير الجودة: إعادة تحميل نفس الفيديو من نفس الثانية مع الجودة المطلوبة (يوتيوب أوقف الطريقة المباشرة)
-        reloadAtQuality(name) {
-          if (!ready || !yt) return false;
-          const t = curTime(), was = state === S.PLAYING || state === S.BUFFERING;
-          try { yt.loadVideoById({ videoId: videoId, startSeconds: t, suggestedQuality: name }); } catch (_) { return false; }
-          if (!was) setTimeout(() => { try { yt.pauseVideo(); } catch (_) {} }, 800);
-          return true;
-        },
-        destroy() {
-          if (destroyed) return;
-          curTime(); curDur(); // نحتفظ بآخر قيمة قبل الإغلاق
-          destroyed = true; clearInterval(ticker); try { document.removeEventListener("click", closeMenus); document.removeEventListener("keydown", onKey); const o2 = document.getElementById("pvOverlay"); if (o2) { o2.classList.remove("pv-idle"); ["pointerdown", "pointermove", "touchstart"].forEach((ev) => o2.removeEventListener(ev, act, true)); } } catch (_) {}
-          try { if (yt && yt.destroy) yt.destroy(); } catch (_) {}
-          yt = null; ready = false;
-          Object.keys(handlers).forEach((k) => delete handlers[k]);
-        }
-      };
-
-      // ----- السرعة + الجودة + المفضلة (أزرار داخل شريط المشغل) -----
-      const SPEEDS_FALLBACK = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
-      const Q_LABEL = { hd2160: "2160p", hd1440: "1440p", hd1080: "1080p", hd720: "720p", large: "480p", medium: "360p", small: "240p", tiny: "144p" };
-      const Q_NUM = { hd2160: 2160, hd1440: 1440, hd1080: 1080, hd720: 720, large: 480, medium: 360, small: 240, tiny: 144 };
-      const fmtSpeed = (v) => String(v) + "×";
-      const closeMenus = () => { ui.speedMenu.hidden = true; ui.qMenu.hidden = true; };
-      function toggleMenu(menu, other) {
-        other.hidden = true;
-        if (menu.hidden) { menu.style.maxHeight = Math.max(90, ui.stage.clientHeight - 14) + "px"; menu.hidden = false; } else menu.hidden = true;
-      }
-      function getSpeed() { try { return yt.getPlaybackRate() || 1; } catch (_) { return 1; } }
-      function savedSpeed() { try { const v = Number(localStorage.getItem("pv_speed")); return v >= 0.25 && v <= 2 ? v : 1; } catch (_) { return 1; } }
-      function syncSpeedUI() {
-        if (destroyed) return;
-        const v = getSpeed();
-        ui.speedLbl.textContent = fmtSpeed(v);
-        ui.speedMenu.querySelectorAll("button").forEach((b) => b.classList.toggle("on", Math.abs(Number(b.dataset.s) - v) < 0.001));
-      }
-      function buildSpeedMenu() {
-        let rates = SPEEDS_FALLBACK;
-        try { const r = (yt.getAvailablePlaybackRates() || []).filter((x) => x >= 0.5 && x <= 2); if (r.length) rates = r; } catch (_) {}
-        ui.speedMenu.innerHTML = rates.map((r) => `<button type="button" data-s="${r}">${fmtSpeed(r)}</button>`).join("");
-        syncSpeedUI();
-      }
-      function applySavedSpeed() { // يوتيوب أحياناً يرجّع السرعة 1 عند بدء التشغيل، فنعيد تطبيق اختيار الطالب
-        if (destroyed || !ready) return;
-        const s = savedSpeed();
-        if (Math.abs(getSpeed() - s) > 0.001) { try { yt.setPlaybackRate(s); } catch (_) {} }
-        syncSpeedUI();
-      }
-      function curQName() { try { return yt.getPlaybackQuality() || ""; } catch (_) { return ""; } }
-      function syncQUI() {
-        if (destroyed || !ready) return;
-        const cur = curQName(), auto = (typeof pvQuality === "undefined" ? 0 : pvQuality) === 0;
-        ui.qLbl.textContent = auto ? "تلقائي" : (Q_LABEL[cur] || "تلقائي");
-        ui.qBtn.title = "جودة الفيديو — الحالية: " + (Q_LABEL[cur] || "—");
-      }
-      function buildQMenu() {
-        let lv = [];
-        try { lv = (yt.getAvailableQualityLevels() || []).filter((x) => Q_NUM[x]); } catch (_) {}
-        if (!lv.length) lv = ["hd1080", "hd720", "large", "medium"]; // قبل بدء التشغيل لا يرد يوتيوب بالمستويات المتاحة
-        const cur = curQName(), pref = typeof pvQuality === "undefined" ? 0 : pvQuality;
-        ui.qMenu.innerHTML = [`<button type="button" data-q="0">تلقائي${Q_LABEL[cur] ? " (" + Q_LABEL[cur] + ")" : ""}</button>`]
-          .concat(lv.map((x) => `<button type="button" data-q="${Q_NUM[x]}">${Q_LABEL[x]}</button>`)).join("");
-        ui.qMenu.querySelectorAll("button").forEach((b) => b.classList.toggle("on", Number(b.dataset.q) === pref));
-      }
-      ui.speedBtn.addEventListener("click", (e) => { e.stopPropagation(); if (!ready) return; toggleMenu(ui.speedMenu, ui.qMenu); });
-      ui.qBtn.addEventListener("click", (e) => { e.stopPropagation(); if (!ready) return; buildQMenu(); toggleMenu(ui.qMenu, ui.speedMenu); });
-      ui.speedMenu.addEventListener("click", (e) => {
-        const b = e.target.closest("button[data-s]"); if (!b) return; e.stopPropagation();
-        const v = Number(b.dataset.s);
-        try { yt.setPlaybackRate(v); } catch (_) {}
-        try { localStorage.setItem("pv_speed", String(v)); } catch (_) {}
-        closeMenus(); setTimeout(syncSpeedUI, 80);
-      });
-      ui.qMenu.addEventListener("click", (e) => {
-        const b = e.target.closest("button[data-q]"); if (!b) return; e.stopPropagation();
-        closeMenus();
-        pvApplyQuality(Number(b.dataset.q));
-        [900, 2800].forEach((ms) => setTimeout(syncQUI, ms));
-      });
-      ui.fav.addEventListener("click", (e) => { e.stopPropagation(); try { window.pvFavToggle && window.pvFavToggle(); } catch (_) {} });
-      document.addEventListener("click", closeMenus);
-
-      // ----- لمسات ومفاتيح: ضغطتين يمين/شمال = ±15 ثانية، ضغطة مطولة = تسريع، والكيبورد -----
-      const SEEK_STEP = 15, VOL_STEP = 10;
-      const fx = { r: q(".pvx-fx-r"), l: q(".pvx-fx-l"), h: q(".pvx-fx-h") };
-      function flash(el, text, sticky) {
-        el.textContent = text; el.classList.add("show"); clearTimeout(el._t);
-        if (!sticky) el._t = setTimeout(() => el.classList.remove("show"), 750);
-      }
-      function seekBy(n) {
-        if (!ready) return;
-        if (n > 0) api.forward(n); else api.rewind(-n);
-        flash(n > 0 ? fx.r : fx.l, (n > 0 ? "⏩ " : "⏪ ") + Math.abs(n) + " ث");
-      }
-      function stepVolume(d) {
-        if (!ready || !yt) return;
-        let v = 100, m = false;
-        try { v = yt.getVolume(); m = yt.isMuted(); } catch (_) {}
-        const nv = Math.max(0, Math.min(100, Math.round(((m ? 0 : v) + d) / 5) * 5));
-        try { yt.setVolume(nv); if (nv > 0 && yt.isMuted()) yt.unMute(); if (nv === 0) yt.mute(); } catch (_) {}
-        syncVolUI(); flash(fx.h, (nv === 0 ? "🔇 " : "🔊 ") + nv + "%");
-      }
-      // الضغطة المطولة: تسريع يزيد مع طول الضغط (حد يوتيوب الأقصى 2×) ويرجع للسرعة الأصلية عند الإفلات
-      const lp = { timer: null, iv: null, active: false, base: 1, t0: 0, rate: 1 };
-      function lpStart() {
-        if (!ready || !api.playing) return;
-        lp.active = true; lp.base = getSpeed(); lp.t0 = Date.now(); lp.rate = 0;
-        lpTick(); lp.iv = setInterval(lpTick, 120);
-      }
-      function lpTick() {
-        const held = Date.now() - lp.t0;
-        const r = Math.max(lp.base, held < 1800 ? 1.5 : held < 3600 ? 1.75 : 2);
-        if (r !== lp.rate) { lp.rate = r; try { yt.setPlaybackRate(r); } catch (_) {} flash(fx.h, "⏩ " + r + "×", true); }
-      }
-      function lpEnd() {
-        clearTimeout(lp.timer); clearInterval(lp.iv);
-        if (!lp.active) return;
-        lp.active = false;
-        try { yt.setPlaybackRate(lp.base); } catch (_) {}
-        fx.h.classList.remove("show"); syncSpeedUI();
-      }
-      let down = null, lastTap = { t: 0, side: "" }, chainUntil = 0;
-      function sideOf(x, y) {
-        const r = ui.stage.getBoundingClientRect(), ov = document.getElementById("pvOverlay");
-        const rot = ov && ov.classList.contains("pv-rot"); // وضع الفيديو الملفوف 90° على الموبايل الرأسي
-        const f = rot ? (y - r.top) / r.height : (x - r.left) / r.width;
-        return f > 0.6 ? "r" : f < 0.4 ? "l" : "";
-      }
-      ui.stage.addEventListener("pointerdown", (e) => {
-        if (e.button > 0 || !started || !ready) return;
-        down = { x: e.clientX, y: e.clientY, moved: false, long: false };
-        clearTimeout(lp.timer);
-        lp.timer = setTimeout(() => { if (down && !down.moved) { down.long = true; lpStart(); } }, 450);
-      });
-      ui.stage.addEventListener("pointermove", (e) => {
-        if (down && !down.moved && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 14) { down.moved = true; clearTimeout(lp.timer); lpEnd(); }
-      });
-      const endPress = (e) => {
-        clearTimeout(lp.timer);
-        const d = down; down = null; if (!d) return;
-        if (d.long) { lpEnd(); return; }
-        if (d.moved || e.type !== "pointerup") return;
-        const side = sideOf(e.clientX, e.clientY), now = Date.now();
-        if (!side) { // ضغطة واحدة في النص = تشغيل / إيقاف
-          lastTap = { t: 0, side: "" };
-          const wasPaused = api.paused; api.togglePlay(); flash(fx.h, wasPaused ? "▶" : "⏸");
-          return;
-        }
-        if (lastTap.side === side && (now - lastTap.t < 320 || now < chainUntil)) { seekBy(side === "r" ? SEEK_STEP : -SEEK_STEP); chainUntil = now + 450; }
-        else chainUntil = 0;
-        lastTap = { t: now, side: side };
-      };
-      ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => ui.stage.addEventListener(ev, endPress));
-      // الكيبورد (كمبيوتر): مسافة = تشغيل/إيقاف، ←/→ = ±15 ثانية، ↑/↓ = الصوت
-      function onKey(e) {
-        if (destroyed || !ready || e.ctrlKey || e.metaKey || e.altKey) return;
-        lastAct = Date.now(); { const o = document.getElementById("pvOverlay"); if (o) o.classList.remove("pv-idle"); }
-        const ov = document.getElementById("pvOverlay"); if (!ov || !ov.classList.contains("active")) return;
-        const t = e.target;
-        if (t && (t.isContentEditable || (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && t.type !== "range"))) return;
-        const am = document.getElementById("pvAttentionModal"); if (am && am.classList.contains("active")) return;
-        let handled = true;
-        switch (e.key) {
-          case " ": case "Spacebar": if (!e.repeat) api.togglePlay(); break;
-          case "ArrowRight": seekBy(SEEK_STEP); break;
-          case "ArrowLeft": seekBy(-SEEK_STEP); break;
-          case "ArrowUp": stepVolume(VOL_STEP); break;
-          case "ArrowDown": stepVolume(-VOL_STEP); break;
-          default: handled = false;
-        }
-        if (handled) {
-          e.preventDefault();
-          const a = document.activeElement; // نشيل التركيز من الزر/الشريط عشان المسافة والأسهم ما يتنفذوش مرتين
-          if (a && a !== document.body && (a.tagName === "BUTTON" || a.type === "range")) a.blur();
-        }
-      }
-      document.addEventListener("keydown", onKey);
-      const ovEl = document.getElementById("pvOverlay");
-      const act = () => { lastAct = Date.now(); if (ovEl) ovEl.classList.remove("pv-idle"); };
-      const ACT_EVS = ["pointerdown", "pointermove", "touchstart"];
-      if (ovEl) ACT_EVS.forEach((ev) => ovEl.addEventListener(ev, act, true));
-
-      // ----- أزرار شريط التحكم -----
-      ui.play.addEventListener("click", () => api.togglePlay());
-      ui.big.addEventListener("click", (e) => { e.stopPropagation(); api.play(); });
-      ui.poster.addEventListener("click", () => { if (!ui.big.hidden) api.play(); });
-      ui.seek.addEventListener("input", () => {
-        dragging = true;
-        const d = curDur(); if (!d) return;
-        ui.cur.textContent = pvxFmt((ui.seek.value / 1000) * d); setFill(ui.seek, ui.seek.value / 10);
-      });
-      ui.seek.addEventListener("change", () => {
-        const d = curDur();
-        if (d) api.currentTime = (ui.seek.value / 1000) * d;
-        dragging = false;
-      });
-      ui.vol.addEventListener("input", () => {
-        if (!yt || !ready) return;
-        const v = +ui.vol.value;
-        try { yt.setVolume(v); if (v > 0 && yt.isMuted()) yt.unMute(); if (v === 0) yt.mute(); } catch (_) {}
-        syncVolUI();
-      });
-      ui.mute.addEventListener("click", () => {
-        if (!yt || !ready) return;
-        try {
-          if (yt.isMuted() || yt.getVolume() === 0) { yt.unMute(); if (yt.getVolume() === 0) yt.setVolume(50); }
-          else yt.mute();
-        } catch (_) {}
-        syncVolUI();
-      });
-      // منع أي تفاعل مباشر مع يوتيوب (كليك يمين / دبل كليك / سحب)
-      ["contextmenu", "dblclick", "dragstart"].forEach((evt) => ui.stage.addEventListener(evt, (e) => e.preventDefault()));
-
-      // ----- ربط يوتيوب -----
-      function onState(e) {
-        const prev = state; state = e.data;
-        if (state === S.PLAYING) {
-          if (!started) { started = true; ui.poster.classList.add("hidden"); setTimeout(applySavedSpeed, 400); }
-          ui.poster.classList.remove("busy");
-          checkMeta(); setPlayUI(true); emit("playing");
-        } else if (state === S.PAUSED) {
-          if (prev === S.PAUSED) return; // pause() أرسل الحدث فعلاً
-          setPlayUI(false); tick(true); emit("pause");
-        } else if (state === S.ENDED) {
-          setPlayUI(false); tick(true); emit("pause"); emit("ended");
-        }
-      }
-      function onReady() {
-        if (destroyed) return;
-        ready = true;
-        try { const f = yt.getIframe(); f.setAttribute("tabindex", "-1"); f.setAttribute("aria-hidden", "true"); } catch (_) {}
-        ui.seek.disabled = false;
-        if (pendingSeek != null) { try { yt.seekTo(pendingSeek, true); } catch (_) {} pendingSeek = null; }
-        syncVolUI(); tick(true);
-        buildSpeedMenu(); applySavedSpeed(); syncQUI(); try { pvApplyFill(); } catch (_) {}
-        emit("ready");
-        if (autoplay) { try { yt.playVideo(); } catch (_) {} }
-        setTimeout(() => { if (!started) ui.poster.classList.remove("busy"); }, 1500); // لو التشغيل التلقائي اتمنع، الطالب يضغط ▶
-      }
-      pvLoadYtApi().then(() => {
-        if (destroyed) return;
-        const vars = { controls: 0, modestbranding: 1, rel: 0, showinfo: 0, iv_load_policy: 3, disablekb: 1, enablejsapi: 1, playsinline: 1, fs: 0, autoplay: 1 };
-        if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
-        yt = new YT.Player(ui.target, {
-          host: "https://www.youtube-nocookie.com",
-          videoId: videoId,
-          playerVars: vars,
-          events: { onReady: onReady, onStateChange: onState, onPlaybackRateChange: () => { if (!destroyed) syncSpeedUI(); }, onPlaybackQualityChange: () => { if (!destroyed) syncQUI(); }, onError: (e) => { if (!destroyed) showError(e && e.data); } }
-        });
-      }).catch(() => { if (!destroyed) showError("net"); });
-      ticker = setInterval(() => tick(false), 250);
-      return api;
-    }
-
-    function pvStartYtPlayback() {
-      const videoId = pvPendingVideoId; if (!videoId) return;
-      const host = document.getElementById("pvVideoBox");
-      const old = document.getElementById("pvPlayer");
-      const root = document.createElement("div");
-      root.id = "pvPlayer"; root.className = "pvx";
-      root.innerHTML = PVX_HTML;
-      if (old) old.replaceWith(root); else host.appendChild(root);
-      host.classList.add("pvx-on");
-      root.querySelector(".pvx-poster").style.backgroundImage = `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`;
-
-      pvPlayerInstance = pvCreateYtPlayer(root, videoId);
-      const p = pvPlayerInstance;
-      try { window.pvFavPaint && window.pvFavPaint(); } catch (_) {} // قلب المفضلة داخل الشريط
-
-      document.getElementById("pvFacade").style.display = "none";
-      document.getElementById("pvTouchOverlay").style.display = "none"; // التحكم بالكامل من شريط المشغل فقط
-
-      // العلامة المائية باسم ورقم الطالب الحالي (داخل منطقة الفيديو)
-      const watermarkDiv = document.createElement("div");
-      watermarkDiv.id = "pv-watermark";
-      watermarkDiv.innerText = `${currentStudent ? (currentStudent.name || "طالب") : "طالب"} | ${currentStudent ? (currentStudent.phone || "") : ""}`;
-      root.querySelector(".pvx-stage").appendChild(watermarkDiv);
-      const corners = [{ top: "8%", right: "5%" }, { top: "8%", right: "70%" }, { top: "75%", right: "5%" }, { top: "75%", right: "70%" }];
-      let c = 0;
-      pvWatermarkInterval = setInterval(() => {
-        c = (c + 1) % corners.length;
-        watermarkDiv.style.top = corners[c].top; watermarkDiv.style.right = corners[c].right;
-      }, 6000);
-
-      p.on("ready", () => { pvFitLayout(); pvApplyQuality(pvQuality, true); });
-      p.on("loadedmetadata", () => {
-        const duration = p.duration;
-        if (duration && duration > 60) pvCheckPoints = [Math.floor(duration * 0.4), Math.floor(duration * 0.7)];
-      });
-      p.on("timeupdate", () => {
-        const t = Math.floor(p.currentTime);
-        pvCheckPoints.forEach((pt) => {
-          if (t === pt && !pvCheckedPoints.has(pt)) { pvCheckedPoints.add(pt); pvTriggerAttentionCheck(); }
-        });
-      });
-
-      pvFitLayout();
-      requestAnimationFrame(pvFitLayout);
-      pvSetupYtShield(videoId, host); // إخفاء فيديوهات يوتيوب المقترحة عند الإيقاف/النهاية
-    }
-
     // ===== درع يوتيوب =====
     // يوتيوب نفسه بيرسم شاشة "فيديوهات مقترحة/المزيد" فوق الفيديو في حالتين: عند نهاية الفيديو وعند الإيقاف المؤقت،
     // حتى لو الفيديو علني وبإعداد rel=0. الحل إننا نغطي الإطار بغطاء خاص (فيه صورة الفيديو مظلّلة + رسالة) في الحالتين.
@@ -3931,9 +3234,9 @@
       cover.style.setProperty("--pv-thumb", `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`);
       const msg = document.createElement("div"); cover.appendChild(msg);
       // داخل .plyr نفسه (زي العلامة المائية) عشان يفضل شغال في وضع ملء الشاشة بتاع Plyr
-      (host.querySelector(".plyr") || host.querySelector(".pvx-stage") || host).appendChild(cover);
-      const END_TXT = "✅ انتهت المحاضرة — اضغط زر التشغيل لإعادة المشاهدة";
-      const PAUSE_TXT = "⏸ الفيديو متوقف مؤقتاً — اضغط زر التشغيل للمتابعة";
+      (host.querySelector(".plyr") || host).appendChild(cover);
+      const END_TXT = "✅ انتهت المحاضرة — اضغط في المنتصف لإعادة المشاهدة";
+      const PAUSE_TXT = "⏸ الفيديو متوقف مؤقتاً — اضغط في المنتصف للمتابعة";
       const show = (t) => { msg.textContent = t; cover.classList.add("show"); };
       const hide = () => { clearTimeout(pvYtPauseTimer); cover.classList.remove("show"); };
       const nearEnd = () => p.duration > 5 && p.duration - p.currentTime < 0.8; // نغطي قبل آخر ثانية عشان ما تظهرش لقطة النهاية
@@ -4283,7 +3586,7 @@
       }
       const done = (k) => !!attendanceRecords[k];
       const hw = homeworkLink && homeworkLink.trim() ? `<a href="${escapeHtml(safeUrl(homeworkLink))}" target="_blank" rel="noopener noreferrer" class="btn-homework" onclick="markHomeworkDone('${id}')">📝 الواجب${done("hw_" + id) ? " ✓" : ""}</a>` : "";
-      const pdf = lecture.pdfLink ? `<a href="${escapeHtml(safeUrl(lecture.pdfLink))}" target="_blank" rel="noopener noreferrer" class="btn-open-lecture" style="background:#6a1b9a" onclick="markItemDone('pdf_${id}')">📄 ملف PDF${done("pdf_" + id) ? " ✓" : ""}</a>` : "";
+      const pdf = lecture.pdfLink ? `<a href="${escapeHtml(safeUrl(lecture.pdfLink))}" target="_blank" rel="noopener noreferrer" class="btn-open-lecture" style="background:#6a1b9a" onclick="markHomeworkDone('pdf_${id}')">📄 ملف PDF${done("pdf_" + id) ? " ✓" : ""}</a>` : "";
       return `<div class="sub-timer" data-exp="${S.until}">⏳ ${fmtDhms(S.left)}</div>
         <button type="button" class="btn-open-lecture" onclick="openLectureById('${id}')">🔗 دخول المحاضرة${done(id) ? " ✓" : ""}</button>${hw}${pdf}`;
     }
@@ -5012,30 +4315,18 @@
     // ---------- (2) جودة الفيديو داخل قائمة إعدادات المشغل ----------
     // ملاحظة مهمة: يوتيوب أوقف رسمياً دعم setPlaybackQuality في الـ IFrame API (صارت لا تؤثر)، لذلك الاختيار
     // يُرسَل لمشغل يوتيوب بأفضل جهد ويُحفظ كتفضيل للطالب، لكن يوتيوب قد يتجاهله ويختار الجودة تلقائياً.
-    const PV_QUALITIES = [0, 2160, 1440, 1080, 720, 480, 360, 240, 144]; // 0 = Auto
-    const PV_YT_Q = { 0: "default", 2160: "hd2160", 1440: "hd1440", 1080: "hd1080", 720: "hd720", 480: "large", 360: "medium", 240: "small", 144: "tiny" };
+    const PV_QUALITIES = [0, 1080, 720, 480, 360]; // 0 = Auto
+    const PV_YT_Q = { 0: "default", 1080: "hd1080", 720: "hd720", 480: "large", 360: "medium" };
     let pvQuality = (() => { try { const v = Number(localStorage.getItem("pv_quality")); return PV_QUALITIES.includes(v) ? v : 0; } catch (_) { return 0; } })();
     function pvApplyQuality(q, silent) {
       q = Number(q); if (!PV_QUALITIES.includes(q)) q = 0;
       pvQuality = q;
       if (!silent) { try { localStorage.setItem("pv_quality", String(q)); } catch (_) {} }
-      const p = pvPlayerInstance, emb = p && p.embed, name = PV_YT_Q[q];
+      const emb = pvPlayerInstance && pvPlayerInstance.embed, name = PV_YT_Q[q];
       if (!emb) return;
       try { if (typeof emb.setPlaybackQualityRange === "function") emb.setPlaybackQualityRange(name, name); } catch (_) {}
       try { if (typeof emb.setPlaybackQuality === "function") emb.setPlaybackQuality(name); } catch (_) {}
       document.querySelectorAll("#pvVideoBox .pv-q-menu button").forEach((b) => b.classList.toggle("on", Number(b.dataset.q) === q));
-      // اختيار يدوي من الطالب: نتحقق أن يوتيوب طبّق الجودة فعلاً، وإلا نعيد تحميل الفيديو من نفس الثانية بالجودة المطلوبة
-      if (!silent && q !== 0) {
-        const cur = () => { try { return emb.getPlaybackQuality(); } catch (_) { return ""; } };
-        setTimeout(() => {
-          if (pvPlayerInstance !== p || cur() === name) return;
-          if (typeof p.reloadAtQuality === "function") p.reloadAtQuality(name);
-          setTimeout(() => {
-            if (pvPlayerInstance !== p || cur() === name) return;
-            try { showNotifToast("⚠️ يوتيوب لم يطبّق هذه الجودة على اتصالك/جهازك الآن، وسيختار الجودة المناسبة تلقائياً.", "system"); } catch (_) {}
-          }, 3800);
-        }, 1300);
-      }
     }
     // لو Plyr لم يرسم عنصر "الجودة" داخل قائمة الإعدادات (يختلف حسب النسخة/المزوّد) نضيف زر جودة بجوار الترس كاحتياطي
     function pvEnsureQualityMenu() {
@@ -6026,9 +5317,8 @@
         <div class="trk-ask-hint" id="trkAskHint"></div>
         <button type="button" class="trk-ask-send" onclick="TRK.askSend()">📲 إرسال عبر واتساب</button>
       </div>`;
-    const below = $("pvBelow"), hwPane = $("pvHwPane");
-    if (below) { below.insertAdjacentElement("afterbegin", bar); (hwPane || bar).insertAdjacentElement("afterend", ask); }
-    else { wrap.insertAdjacentElement("afterend", bar); bar.insertAdjacentElement("afterend", ask); }
+    wrap.insertAdjacentElement("afterend", bar);
+    bar.insertAdjacentElement("afterend", ask);
   }
   function setNote(html, show, withRestart) {
     const el = $("trkResume"); if (!el) return;
@@ -6120,8 +5410,7 @@
     try { const q = pvPlayerInstance.embed.getPlaybackQuality(); return QNAME[q] || "تلقائي"; } catch (_) { return "تلقائي"; }
   }
   function injectQuality() {
-    if (!pvPendingDriveId) return; // يوتيوب: زر الجودة صار داخل شريط المشغل
-    const pl = document.querySelector("#pvVideoBox .plyr, #pvVideoBox .pvx"); if (!pl || pl.querySelector(".trk-q")) return;
+    const pl = document.querySelector("#pvVideoBox .plyr"); if (!pl || pl.querySelector(".trk-q")) return;
     const drive = !!pvPendingDriveId, box = document.createElement("div"); box.className = "trk-q";
     box.innerHTML = `<button type="button" class="trk-q-btn" aria-haspopup="true" aria-label="جودة الفيديو">⚙ <span class="trk-q-lbl">…</span></button>` +
       (drive ? "" : `<div class="trk-q-menu" hidden>${PV_QUALITIES.map((q) => `<button type="button" data-q="${q}">${q ? q + "p" : "تلقائي"}</button>`).join("")}</div>`);
@@ -6984,349 +6273,6 @@ function renderResult() {
 start();
 })();
 
-</script>
-<style>
-.pv-fav-btn{position:absolute;top:10px;left:52px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.6);border:2px solid #fff;font-size:16px;cursor:pointer;z-index:30;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:transform .15s}
-.pv-fav-btn:active{transform:scale(.88)}
-.pv-fav-btn.on{background:#fff}
-.pv-overlay.pv-full .pv-fav-btn{top:6px;left:40px;width:28px;height:28px;font-size:14px;opacity:.85}
-@media (max-width:600px){.pv-fav-btn{top:6px;left:40px;width:28px;height:28px;font-size:14px;opacity:.9}}
-.lec-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 10px}
-.btn-share{background:#1a73e8;color:#fff;border:0;border-radius:8px;padding:6px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
-.btn-share:hover{filter:brightness(1.1)}
-.lec-fav-tag{font-size:12px;color:#e53935;font-weight:700}
-.lecture-card.deep-hl{outline:3px solid #d4af37;outline-offset:3px;animation:deepPulse 1s ease-in-out 3}
-@keyframes deepPulse{50%{outline-color:transparent}}
-.deep-notice{background:#fff8e1;color:#7a5200;border:1px solid #f0d27a;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:14px;font-weight:700;text-align:center}
-</style>
-<script>
-/* ===== المفضلة + المشاركة + روابط المحاضرات المباشرة مع التحقق من الاشتراك ===== */
-(function () {
-  const $ = (id) => document.getElementById(id);
-  const DL_KEY = "shafeei_deeplink";
-  const toast = (t) => { try { showNotifToast(t, "system"); } catch (_) { alert(t); } };
-
-  /* ---------- 1) المفضلة (قلب داخل مشغل المحاضرة) ---------- */
-  const favKey = () => "fav_" + (currentStudent ? normalizePhone(currentStudent.phone) : "guest");
-  const getFavs = () => { try { const a = JSON.parse(localStorage.getItem(favKey()) || "[]"); return Array.isArray(a) ? a : []; } catch (_) { return []; } };
-  const isFav = (id) => getFavs().includes(String(id));
-  let curId = null;
-  window.pvCurLectureId = () => curId;
-  window.pvFavToggle = () => toggleFav();
-  window.pvFavPaint = () => paintHeart();
-  function ensureHeart() { /* القلب العلوي القديم أُلغي: الزر الآن في شريط المشغل وتحت الفيديو */ }
-  function paintHeart() {
-    const on = !!curId && isFav(curId);
-    document.querySelectorAll("[data-pv-fav]").forEach((b) => {
-      b.classList.toggle("on", on);
-      b.title = on ? "إزالة من المفضلة" : "أضف إلى المفضلة";
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-      const l = b.querySelector(".pv-fav-lbl"); if (l) l.textContent = on ? "في المفضلة" : "أضف للمفضلة";
-      const i = b.querySelector(".pv-fav-ico"); if (i) i.textContent = on ? "❤️" : "🤍";
-    });
-  }
-  function toggleFav() {
-    if (!curId) return;
-    const id = String(curId); let f = getFavs();
-    f = f.includes(id) ? f.filter((x) => x !== id) : f.concat(id);
-    try { localStorage.setItem(favKey(), JSON.stringify(f)); } catch (_) {}
-    paintHeart(); decorate(document);
-    try { sfxClick(); } catch (_) {}
-  }
-
-  /* ---------- 2) زر المشاركة على بطاقة كل محاضرة ---------- */
-  function decorate(root) {
-    (root || document).querySelectorAll('.lecture-card[id^="card-"]').forEach((card) => {
-      const id = card.id.slice(5), h = card.querySelector(".lecture-header"); if (!h) return;
-      const old = card.querySelector(".lec-tools"); if (old) old.remove();
-      const d = document.createElement("div"); d.className = "lec-tools";
-      d.innerHTML = '<button type="button" class="btn-share" data-share="' + escapeHtml(id) + '">🔗 مشاركة</button>' + (isFav(id) ? '<span class="lec-fav-tag">❤️ في المفضلة</span>' : "");
-      h.insertAdjacentElement("afterend", d);
-    });
-  }
-  document.addEventListener("click", (e) => { const b = e.target.closest("[data-share]"); if (b) { e.preventDefault(); shareLecture(b.dataset.share); } });
-  async function shareLecture(id) {
-    const l = lectureIndex[id], title = l ? l.title : "محاضرة";
-    const url = location.href.split(/[?#]/)[0] + "?lecture=" + encodeURIComponent(id); // الرابط يحتوي رقم المحاضرة فقط (لا يكشف رابط الفيديو)
-    try { if (navigator.share) { await navigator.share({ title: title, text: "محاضرة: " + title + " — منصة الشافعي الصغير", url: url }); return; } }
-    catch (e) { if (e && e.name === "AbortError") return; }
-    try { await navigator.clipboard.writeText(url); toast("🔗 تم نسخ رابط المحاضرة"); }
-    catch (_) { prompt("انسخ رابط المحاضرة:", url); }
-  }
-
-  /* ---------- 3) فتح الرابط المشارَك مع التحقق من الدخول والاشتراك ---------- */
-  let pending = null, state = "wait", readyAt = 0;
-  try {
-    const q = new URLSearchParams(location.search).get("lecture"), m = /[#&]lecture=([^&]+)/.exec(location.hash);
-    pending = q || (m ? decodeURIComponent(m[1]) : null) || sessionStorage.getItem(DL_KEY);
-    if (q || m) { sessionStorage.setItem(DL_KEY, pending); history.replaceState(null, "", location.href.split(/[?#]/)[0]); }
-  } catch (_) {}
-  function finish() { pending = null; try { sessionStorage.removeItem(DL_KEY); } catch (_) {} const n = $("deepNotice"); if (n) n.remove(); }
-  function showNotice() {
-    if ($("deepNotice")) return; const f = $("authForm"); if (!f) return;
-    f.insertAdjacentHTML("afterbegin", '<div class="deep-notice" id="deepNotice">🔒 سجّل الدخول (أو أنشئ حساباً) ثم اشترك في الكورس لمشاهدة المحاضرة المشاركة</div>');
-  }
-  function goTo(l, cid) {
-    currentCourse = cid; activatingCourse = cid;
-    setView("course");
-    const card = SUBJECT_CARDS.find((c) => (c.subjects || []).includes(l.subject) && (!c.courses || c.courses.includes(cid)));
-    if (card) openSubject(card.tab);
-    setTimeout(() => {
-      const el = $("card-" + l.id); if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      el.classList.add("deep-hl"); setTimeout(() => el.classList.remove("deep-hl"), 4000);
-    }, 450);
-  }
-  function step() {
-    if (!pending) return;
-    if (!currentStudent) { showNotice(); return; }              // غير مسجّل: نافذة الدخول تبقى مفتوحة ولا يُفتح شيء
-    if (!readyAt) readyAt = Date.now();
-    const id = pending, l = lectureIndex[id];
-    if (!l) {
-      const age = Date.now() - readyAt;
-      if ((lastFetchAt > 0 && age > 3000) || age > 20000) { toast("⚠️ هذه المحاضرة غير متاحة حالياً أو لم يحن موعدها بعد"); finish(); }
-      return;
-    }
-    const cs = (l.courses && l.courses.length) ? l.courses : COURSES.filter((c) => !STRICT_COURSES.includes(c.id)).map((c) => c.id);
-    const ok = (cid) => { const c = COURSES.find((x) => x.id === cid); return !!c && (isAdminUser() || c.isActive(currentStudent)); };
-    const cid = cs.find(ok) || cs.find((x) => COURSES.some((c) => c.id === x)) || COURSES[0].id;
-    const c = COURSES.find((x) => x.id === cid), subscribed = ok(cid);
-    if (!subscribed) {
-      if (state === "blocked") return;                          // سبق التنبيه؛ ننتظر اشتراكه
-      state = "blocked"; goTo(l, cid);
-      if (c && c.free) openFreeSub(cid); else requireSubscription();
-      return;
-    }
-    if (SUBS_ON() && (subsFor !== currentStudent.phone || subsLoading)) return; // انتظر تحميل اشتراكات المحاضرات
-    goTo(l, cid); finish();
-    const S = SUBS_ON() ? subState(id) : { st: "active" };
-    if (S.st === "active") openLectureById(id);                 // مشترك: تُفتح المحاضرة مباشرة
-    else toast("✅ وصلنا للمحاضرة — اضغط زر الاشتراك / إعادة الفتح أسفلها للمشاهدة");
-  }
-  setInterval(() => { try { step(); } catch (e) { console.error("deeplink", e); } }, 800);
-
-  /* ---------- ربط الدوال الموجودة بدون تعديل كودك الأصلي ---------- */
-  const _lec = window.openLectureById;
-  window.openLectureById = function (id) { curId = id; return _lec.apply(this, arguments); };
-  const _opp = window.openProtectedPlayer;
-  window.openProtectedPlayer = function () { ensureHeart(); const r = _opp.apply(this, arguments); paintHeart(); try { window.pvBelowOpen && window.pvBelowOpen(); } catch (e) { console.error("pvBelow", e); } return r; };
-  const _cpp = window.closeProtectedPlayer;
-  window.closeProtectedPlayer = function () { try { window.pvBelowClose && window.pvBelowClose(); } catch (_) {} curId = null; return _cpp.apply(this, arguments); };
-  const _rl = window.renderLectures;
-  window.renderLectures = function (list, containerId) { const r = _rl.apply(this, arguments); try { decorate($(containerId)); } catch (e) { console.error("share", e); } return r; };
-})();
-</script>
-<script>
-/* ===== لوحة المحاضرة تحت الفيديو: المفضلة + الواجب والملفات + التعليقات (المنصة ويوتيوب) ===== */
-(function () {
-  const $ = (id) => document.getElementById(id);
-  const toast = (t) => { try { showNotifToast(t, "system"); } catch (_) { alert(t); } };
-  const SECRET_KEY = "cm_admin_secret";
-  const curLec = () => (window.pvCurLectureId && window.pvCurLectureId()) || "";
-  const curVid = () => (typeof pvPendingVideoId !== "undefined" && pvPendingVideoId) || "";
-  const url = () => (typeof COMMENTS_SCRIPT_URL !== "undefined" ? COMMENTS_SCRIPT_URL : "");
-  const isStaff = () => {
-    try { return !!currentStudent && (isAdminUser() || SUPPORT_ADMIN_PHONES.includes(normalizePhone(currentStudent.phone))); } catch (_) { return false; }
-  };
-
-  /* ---------- ملء الشاشة تلقائياً عند الفتح (لو المتصفح سمح) ---------- */
-  function autoFullscreen() {
-    try {
-      const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
-      if (req && !document.fullscreenElement && !document.webkitFullscreenElement) {
-        const pr = req.call(el);
-        if (pr && pr.catch) pr.catch(() => {});
-      }
-    } catch (_) {}
-  }
-
-  /* ---------- الواجب والملفات (مربوطة بنفس علامات ✓ الموجودة على بطاقة المحاضرة) ---------- */
-  function hwRender() {
-    const el = $("pvHwPane"); if (!el) return;
-    const id = curLec(), l = id && lectureIndex[id];
-    if (!l) { el.innerHTML = ""; el.hidden = true; return; }
-    el.hidden = false;
-    const done = (k) => !!(typeof attendanceRecords !== "undefined" && attendanceRecords[k]);
-    const eid = escapeHtml(id), items = [];
-    if (l.homeworkLink && String(l.homeworkLink).trim()) {
-      items.push(`<a class="pv-act" href="${escapeHtml(safeUrl(l.homeworkLink))}" target="_blank" rel="noopener noreferrer" data-hw="${eid}">📝 <span>حل الواجب</span>${done("hw_" + id) ? '<i class="pv-done">✓ تم</i>' : ""}</a>`);
-    }
-    if (l.pdfLink) {
-      items.push(`<a class="pv-act" href="${escapeHtml(safeUrl(l.pdfLink))}" target="_blank" rel="noopener noreferrer" data-pdf="${eid}">📄 <span>ملف PDF</span>${done("pdf_" + id) ? '<i class="pv-done">✓ تم</i>' : ""}</a>`);
-    }
-    try {
-      if (qzHasQuiz(l) && !isAdminUser()) {
-        const r = quizResults[l.id], n = l.quiz.questions.length;
-        items.push(`<button type="button" class="pv-act quiz" data-quiz="${eid}">🧪 <span>${r ? "إعادة اختبار المحاضرة" : `اختبار المحاضرة (${n} سؤال)`}</span></button>`);
-        if (r) {
-          const ok = qzPassed(l.id);
-          items.push(`<div class="pv-qz-note ${ok ? "ok" : "bad"}">نتيجتك الأولى المسجّلة: ${Number(r.firstScore)}/${Number(r.total)} (${Number(r.firstPercent)}%)${ok ? " — تم فتح المحاضرة التالية ✅" : ` — حقّق ${quizPass}% أو أكثر لفتح المحاضرة التالية`}</div>`);
-        }
-      }
-    } catch (_) {}
-    el.innerHTML =
-      `<div class="pv-acts">
-         <button type="button" class="pv-act pv-fav" data-pv-fav><span class="pv-fav-ico">🤍</span> <span class="pv-fav-lbl">أضف للمفضلة</span></button>
-         <button type="button" class="pv-act" data-share="${eid}">🔗 مشاركة</button>
-       </div>
-       <div class="pv-sec-h" style="margin-top:12px">📝 الواجب والملفات</div>` +
-      (items.length ? `<div class="pv-hw-list">${items.join("")}</div>` : `<p class="pv-empty">لا يوجد واجب أو ملفات لهذه المحاضرة حتى الآن.</p>`);
-    try { window.pvFavPaint && window.pvFavPaint(); } catch (_) {}
-  }
-
-  /* ---------- التعليقات ---------- */
-  let list = [], ytInfo = null, timer = null, seq = 0, sending = false;
-
-  function when(ts) {
-    try { const d = new Date(ts); if (isNaN(d)) return ""; return d.toLocaleString("ar-EG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); } catch (_) { return ""; }
-  }
-  function itemHTML(c, isReply) {
-    const id = escapeHtml(c.id), staff = isStaff();
-    const badge = c.byAdmin ? '<span class="pv-badge adm">👨‍🏫 المشرف</span>' : (c.source === "youtube" ? '<span class="pv-badge yt">▶ يوتيوب</span>' : "");
-    return `<div class="pv-cm${isReply ? " rep" : ""}" data-id="${id}">
-      <div class="pv-cm-h"><b>${escapeHtml(c.author || "طالب")}</b>${badge}<span class="pv-cm-t">${escapeHtml(when(c.ts))}</span></div>
-      <div class="pv-cm-b">${escapeHtml(c.text)}</div>
-      ${staff ? `<div class="pv-cm-ops">${isReply ? "" : '<button type="button" data-cm-reply>↩ رد</button>'}<button type="button" data-cm-del>🗑 حذف</button></div>` : ""}
-      ${staff && !isReply ? '<div class="pv-cm-rbox" hidden><input type="text" maxlength="500" placeholder="اكتب ردّك..."><button type="button" class="pv-act" data-cm-sendreply>إرسال</button></div>' : ""}
-    </div>`;
-  }
-  function renderList() {
-    const box = $("pvCmList"); if (!box) return;
-    const byTs = (a, b) => String(a.ts).localeCompare(String(b.ts));
-    const tops = list.filter((c) => !c.parentId).sort((a, b) => byTs(b, a));
-    const reps = {}; list.filter((c) => c.parentId).sort(byTs).forEach((c) => { (reps[c.parentId] = reps[c.parentId] || []).push(c); });
-    const cnt = $("pvCmCount"); if (cnt) cnt.textContent = list.length ? "(" + list.length + ")" : "";
-    if (!tops.length) { box.innerHTML = '<div class="pv-cm-state">لا توجد تعليقات بعد — كن أول من يعلّق.</div>'; return; }
-    box.innerHTML = tops.map((c) => {
-      const inner = itemHTML(c, false) ;
-      const r = (reps[c.id] || []).map((x) => itemHTML(x, true)).join("");
-      return r ? inner.replace(/<\/div>\s*$/, r + "</div>") : inner;
-    }).join("");
-  }
-  function setNote() {
-    const n = $("pvCmNote"); if (!n) return;
-    n.textContent = !curVid() ? "تعليقات المنصة فقط" : (ytInfo && ytInfo.read === false ? "غير متصل بيوتيوب حالياً" : "🔗 متزامنة مع يوتيوب");
-  }
-  async function cmLoad() {
-    if (!url()) return;
-    const lec = curLec(); if (!lec) return;
-    const my = ++seq;
-    const r = await callWithRetry(url(), { action: "getComments", lectureId: lec, videoId: curVid() }, 2);
-    if (my !== seq || lec !== curLec()) return;
-    if (r.type === "ok") { list = r.data.comments || []; ytInfo = r.data.yt || null; renderList(); setNote(); }
-    else if (!list.length) {
-      const box = $("pvCmList");
-      if (box) box.innerHTML = '<div class="pv-cm-state">تعذر تحميل التعليقات الآن. <button type="button" class="pv-act" data-cm-refresh>إعادة المحاولة</button></div>';
-    }
-  }
-  function cmInit() {
-    const pane = $("pvCmPane"); if (!pane) return;
-    list = []; ytInfo = null; seq++;
-    if (!url()) {
-      pane.innerHTML = '<div class="pv-sec-h">💬 التعليقات</div><div class="pv-cm-state">التعليقات غير مفعّلة بعد.' + (isStaff() ? "<br>الصق رابط سكريبت Comments.gs في المتغير COMMENTS_SCRIPT_URL داخل index.html." : "") + "</div>";
-      return;
-    }
-    pane.innerHTML =
-      `<div class="pv-sec-h">💬 التعليقات <span id="pvCmCount"></span><small id="pvCmNote"></small></div>
-       <div class="pv-cm-form">
-         <textarea id="pvCmText" maxlength="500" placeholder="اكتب تعليقك أو سؤالك عن المحاضرة..." aria-label="تعليقك"></textarea>
-         <div class="pv-cm-row"><small>اسمك وتعليقك يظهران للجميع في المنصة، ويُنشران أيضاً على يوتيوب.</small><button type="button" class="pv-act" id="pvCmSend" data-cm-send>إرسال</button></div>
-       </div>
-       <div class="pv-cm-list" id="pvCmList"><div class="pv-cm-state">جاري تحميل التعليقات...</div></div>`;
-    setNote();
-    cmLoad();
-    clearInterval(timer);
-    timer = setInterval(() => {
-      if (document.hidden || !curLec()) return;
-      const ae = document.activeElement;
-      if (ae && ae.closest && ae.closest("#pvCmList")) return; // لا نقاطع الأدمن وهو يكتب رداً
-      if (document.querySelector("#pvCmList .pv-cm-rbox input") && [...document.querySelectorAll("#pvCmList .pv-cm-rbox input")].some((i) => i.value)) return;
-      cmLoad();
-    }, 30000);
-  }
-  async function cmSend() {
-    if (sending) return;
-    const ta = $("pvCmText"), btn = $("pvCmSend"); if (!ta) return;
-    const text = ta.value.trim(); if (!text) return;
-    if (!currentStudent) { toast("سجّل الدخول أولاً لإضافة تعليق"); return; }
-    sending = true; btn.disabled = true; btn.textContent = "جاري الإرسال...";
-    const lec = curLec(), author = currentStudent.name || "طالب";
-    try {
-      const r = await callScript(url(), { action: "addComment", lectureId: lec, videoId: curVid(), author: author, phone: currentStudent.phone || "", text: text, requestId: Date.now() + "-" + Math.random().toString(36).slice(2, 8) });
-      let ok = r.type === "ok";
-      if (r.type === "transient") { // ربما حُفظ التعليق ولم يصلنا الرد: نتحقق قبل أي نتيجة
-        await cmLoad();
-        ok = list.some((c) => c.text === text && c.author === author);
-      }
-      if (ok) {
-        ta.value = "";
-        if (r.type === "ok" && r.data.comment) { list.unshift(r.data.comment); renderList(); }
-        if (r.type === "ok" && r.data.yt && r.data.yt.note) toast(r.data.yt.note);
-        cmLoad();
-      } else toast(r.type === "fail" ? safeMsg(r.message, GENERIC_ERROR) : GENERIC_ERROR);
-    } finally { sending = false; btn.disabled = false; btn.textContent = "إرسال"; }
-  }
-  async function staffCall(payload) {
-    let secret = ""; try { secret = localStorage.getItem(SECRET_KEY) || ""; } catch (_) {}
-    if (!secret) { secret = (prompt("أدخل كلمة سر المشرف للتعليقات (تُحفظ على جهازك هذا فقط):") || "").trim(); if (!secret) return null; }
-    const r = await callScript(url(), Object.assign({ secret: secret, lectureId: curLec(), videoId: curVid() }, payload));
-    if (r.type === "ok") { try { localStorage.setItem(SECRET_KEY, secret); } catch (_) {} }
-    else if (r.type === "fail" && /unauthorized|كلمة سر/.test(String(r.message || ""))) { try { localStorage.removeItem(SECRET_KEY); } catch (_) {} toast("كلمة سر المشرف غير صحيحة"); return null; }
-    return r;
-  }
-
-  /* ---------- أحداث اللوحة (تفويض واحد على اللوحة كلها) ---------- */
-  const below = $("pvBelow");
-  if (below) below.addEventListener("click", async (e) => {
-    const t = e.target;
-    let b;
-    if ((b = t.closest("[data-hw]"))) { try { markHomeworkDone(b.dataset.hw); } catch (_) {} return; }
-    if ((b = t.closest("[data-pdf]"))) { try { markItemDone("pdf_" + b.dataset.pdf); } catch (_) {} return; }
-    if ((b = t.closest("[data-quiz]"))) { const id = b.dataset.quiz; closeProtectedPlayer(); setTimeout(() => { try { openQuiz(id); } catch (_) {} }, 60); return; }
-    if ((b = t.closest("[data-pv-fav]"))) { try { window.pvFavToggle && window.pvFavToggle(); } catch (_) {} return; }
-    if (t.closest("[data-cm-send]")) { cmSend(); return; }
-    if (t.closest("[data-cm-refresh]")) { cmLoad(); return; }
-    const card = t.closest(".pv-cm");
-    if (!card) return;
-    if (t.closest("[data-cm-reply]")) { const rb = card.querySelector(".pv-cm-rbox"); if (rb) { rb.hidden = !rb.hidden; const i = rb.querySelector("input"); if (!rb.hidden && i) i.focus(); } return; }
-    if (t.closest("[data-cm-sendreply]")) {
-      const inp = card.querySelector(".pv-cm-rbox input"), text = inp ? inp.value.trim() : ""; if (!text) return;
-      const btn = t.closest("button"); btn.disabled = true;
-      const r = await staffCall({ action: "adminReply", parentId: card.dataset.id, text: text });
-      btn.disabled = false;
-      if (r && r.type === "ok") { inp.value = ""; if (r.data.comment) list.push(r.data.comment); renderList(); if (r.data.yt && r.data.yt.note) toast(r.data.yt.note); cmLoad(); }
-      else if (r) toast(r.type === "fail" ? safeMsg(r.message, GENERIC_ERROR) : GENERIC_ERROR);
-      return;
-    }
-    if (t.closest("[data-cm-del]")) {
-      if (!confirm("حذف هذا التعليق؟")) return;
-      const r = await staffCall({ action: "deleteComment", id: card.dataset.id });
-      if (r && r.type === "ok") { const id = card.dataset.id; list = list.filter((c) => c.id !== id && c.parentId !== id); renderList(); cmLoad(); }
-      else if (r) toast(r.type === "fail" ? safeMsg(r.message, GENERIC_ERROR) : GENERIC_ERROR);
-    }
-  });
-  if (below) below.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target.matches && e.target.matches(".pv-cm-rbox input")) { e.preventDefault(); const b = e.target.parentElement.querySelector("[data-cm-sendreply]"); if (b) b.click(); }
-  });
-
-  /* ---------- ربط دورة حياة المشغل ---------- */
-  window.pvBelowOpen = function () {
-    if (below) below.scrollTop = 0;
-    hwRender(); cmInit(); autoFullscreen();
-    try { pvManual = false; pvAutoEntered = false; } catch (_) {}
-    requestAnimationFrame(() => { try { pvAutoMode(); pvFitLayout(); } catch (_) {} });
-  };
-  window.pvBelowClose = function () { try { pvManual = false; pvAutoEntered = false; } catch (_) {} clearInterval(timer); timer = null; seq++; list = []; };
-
-  // الواجب في اللوحة والواجب خارج المحاضرة مربوطان: أي تغيير في علامات الإنجاز أو نتيجة الاختبار يحدّث الاثنين
-  const _mid = window.markItemDone;
-  if (typeof _mid === "function") window.markItemDone = function () { const r = _mid.apply(this, arguments); try { if (curLec()) hwRender(); } catch (_) {} return r; };
-  const _ra = window.renderAll;
-  if (typeof _ra === "function") window.renderAll = function () { const r = _ra.apply(this, arguments); try { if (curLec() && $("pvOverlay").classList.contains("active")) hwRender(); } catch (_) {} return r; };
-
-  // المساحة المتاحة للفيديو تتبع حجم اللوحة (تدوير الجهاز / تغيير حجم النافذة)
-  try { const card = document.querySelector("#pvOverlay .pv-card"); if (card && window.ResizeObserver) new ResizeObserver(() => { if (typeof pvIsOpen === "function" && pvIsOpen()) pvScheduleFit(); }).observe(card); } catch (_) {}
-})();
 </script>
 </body>
 </html>
