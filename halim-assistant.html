@@ -6,7 +6,8 @@
   </div>
   <div id="hlmBubble">
     <div class="hlm-head"><span>💧 المساعد حليم</span><span class="hlm-close" id="hlmClose">✖</span></div>
-    <div id="hlmText">جاري التحميل...</div>
+    <div id="hlmWave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <button type="button" id="hlmReplay" title="🔊" aria-label="🔊">🔊</button>
     <div id="hlmForm">
       <input type="text" id="hlmName" placeholder="اسمك الكريم إيه؟" autocomplete="name">
       <input type="tel" id="hlmPhone" placeholder="رقم تليفونك للواتساب..." inputmode="numeric" maxlength="14" autocomplete="tel">
@@ -36,7 +37,13 @@
 #hlmBubble{display:none;flex-direction:column;gap:10px;width:295px;max-width:calc(100vw - 110px);background:#fff;color:#2c3e50;padding:14px;border-radius:16px;border:2px solid #80d4ff;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .hlm-head{display:flex;justify-content:space-between;font-weight:bold;color:#0077cc;border-bottom:1px solid #eee;padding-bottom:5px}
 .hlm-close{cursor:pointer;color:#888}.hlm-close:hover{color:#e53935}
-#hlmText{font-size:13.5px;line-height:1.7;max-height:160px;overflow-y:auto;background:#f4fafc;padding:10px;border-radius:8px;color:#1a252f}
+#hlmWave{display:flex;align-items:center;justify-content:center;gap:5px;height:56px;background:#f4fafc;border-radius:10px}
+#hlmWave span{width:6px;height:8px;border-radius:4px;background:#0088e6;opacity:.35;transition:opacity .2s}
+#hlmWave.on span{opacity:1;animation:hlmBar .7s ease-in-out infinite alternate}
+#hlmWave.on span:nth-child(2){animation-delay:.1s}#hlmWave.on span:nth-child(3){animation-delay:.2s}#hlmWave.on span:nth-child(4){animation-delay:.3s}#hlmWave.on span:nth-child(5){animation-delay:.15s}#hlmWave.on span:nth-child(6){animation-delay:.25s}#hlmWave.on span:nth-child(7){animation-delay:.05s}
+@keyframes hlmBar{from{height:8px}to{height:40px}}
+#hlmReplay{align-self:center;background:#eef9ff;border:1px solid #b3e3ff;border-radius:50%;width:38px;height:38px;font-size:17px;cursor:pointer;line-height:1;padding:0}
+#hlmReplay:hover{background:#0088e6}
 #hlmForm{display:none;flex-direction:column;gap:6px}
 #hlmForm input{padding:8px 10px;border:1px solid #b3e3ff;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
 #hlmForm button{background:#0088e6;color:#fff;border:0;padding:8px;border-radius:8px;font-weight:bold;cursor:pointer;font-family:inherit}
@@ -54,7 +61,8 @@
   var CFG = {
     techWa: "201099442329",      // الدعم الفني
     sciWa:  "201101662590",      // الدعم العلمي
-    autoOpenMs: 1500,            // فتح تلقائي بعد التحميل (0 = بدون)
+    audioDir: "audio/",          // فولدر ملفات الصوت بجانب index.html
+    autoOpenMs: 0,               // الصوت لا يشتغل قبل أول لمسة من الطالب، فالفتح بيتم بالضغط على القطرة
     reminderMs: 30 * 60 * 1000   // تذكير الصلاة على النبي
   };
 
@@ -84,7 +92,7 @@
   };
   var TREE = {
     main: {
-      speech: function (n) { return "منور يا " + n + "! قول لي حابب أساعدك في إيه النهاردة؟"; },
+      speech: function (n) { return "منور المنصة! قول لي حابب أساعدك في إيه النهاردة؟"; },
       html: function (n) { return "منور المنصة يا <b>" + esc(n) + "</b>! 💧<br>اختر اللي محتاجه وأنا معاك خطوة بخطوة:"; },
       options: [
         { t: "🛒 عايز أشترك في الكورسات", next: "subs" },
@@ -172,6 +180,7 @@
 
   function setTalking(on) {
     var d = $("hlmDrop"); if (d) d.classList.toggle("talking", !!on);
+    var w = $("hlmWave"); if (w) w.classList.toggle("on", !!on);
   }
   function stopSpeech() {
     speakSeq++;
@@ -197,10 +206,24 @@
     })();
   }
 
-  function speak(s) {
+  var lastSpeech = "", lastKey = "";
+  function speak(s, key) {
+    lastSpeech = s; lastKey = key || "";
     stopSpeech();
     var seq = speakSeq;
     setTalking(true);
+    if (key) {                                   /* ملف صوت مسجّل: audio/<key>.mp3 */
+      var a = new Audio(CFG.audioDir + key + ".mp3");
+      fallbackAudio = a;
+      a.onended = function () { if (seq === speakSeq) setTalking(false); };
+      a.onerror = function () { if (seq === speakSeq) speakTTS(s, seq); };
+      var pr = a.play();
+      if (pr && pr.catch) pr.catch(function () { if (seq === speakSeq) speakTTS(s, seq); });
+      return;
+    }
+    speakTTS(s, seq);
+  }
+  function speakTTS(s, seq) {
     if ("speechSynthesis" in window && voice) {
       talkTimer = setTimeout(function () {          // مهلة صغيرة بعد cancel علشان كروم ميبلعش الكلام
         if (seq !== speakSeq) return;
@@ -220,7 +243,7 @@
     var st = TREE[key]; if (!st) return;
     current = key;
     text.innerHTML = st.html(me.name);
-    speak(st.speech(me.name));
+    speak(st.speech(me.name), key);
     opts.innerHTML = "";
     var list = typeof st.options === "function" ? st.options() : (st.options || []);
     list.forEach(function (o) {
@@ -243,7 +266,7 @@
   function showForm() {
     form.style.display = "flex"; opts.style.display = "none"; back.style.display = "none";
     text.innerHTML = "👋 أهلاً بك في المنصة!<br>أنا المساعد <b>حليم</b> 💧<br>من فضلك اكتب اسمك ورقم تليفونك لنبدأ:";
-    speak("أهلاً بك في المنصة! أنا المساعد حليم. اكتب اسمك ورقم تليفونك علشان أبدأ أساعدك!");
+    speak("أهلاً بك في المنصة! أنا المساعد حليم. اكتب اسمك ورقم تليفونك علشان أبدأ أساعدك!", "form");
   }
 
   function openBubble() {
@@ -260,7 +283,7 @@
   function save() {
     var n = $("hlmName").value.trim(), p = $("hlmPhone").value.trim();
     if (!n || !/^[0-9+]{10,14}$/.test(p.replace(/\s/g, ""))) {
-      text.innerHTML = "⚠️ اكتب اسمك ورقم تليفون صحيح علشان نبدأ.";
+      speak("اكتب اسمك ورقم تليفونك صح علشان نبدأ يا باشا.", "formerr");
       return;
     }
     me.name = n; me.phone = p;
@@ -269,12 +292,13 @@
   }
 
   function init() {
-    bubble = $("hlmBubble"); text = $("hlmText"); form = $("hlmForm"); opts = $("hlmOptions"); back = $("hlmBack");
+    bubble = $("hlmBubble"); text = {}; /* صوت فقط - لا نص مكتوب */ form = $("hlmForm"); opts = $("hlmOptions"); back = $("hlmBack");
     var root = $("halimAssistant");
     $("hlmDrop").addEventListener("click", function (e) { e.stopPropagation(); toggle(); });
     $("hlmDrop").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
     $("hlmClose").addEventListener("click", function (e) { e.stopPropagation(); closeBubble(); });
     $("hlmSave").addEventListener("click", save);
+    $("hlmReplay").addEventListener("click", function () { if (lastSpeech) speak(lastSpeech, lastKey); });
     back.addEventListener("click", function () { render("main"); });
     bubble.addEventListener("click", function (e) { e.stopPropagation(); });
     document.addEventListener("click", function (e) { if (!root.contains(e.target)) closeBubble(); });
@@ -286,8 +310,7 @@
       syncFromPlatform();
       if (!me.name || bubble.style.display === "flex") return;
       bubble.style.display = "flex"; form.style.display = "none"; opts.style.display = "none"; back.style.display = "none";
-      text.innerHTML = "👋 طمني عليك يا <b>" + esc(me.name) + "</b>؟<br>✨ <b>ما تنساش تصلي على النبي 💖</b> واستعين بالله وكمل مذاكرتك!";
-      speak("طمني عليك يا " + me.name + "؟ ما تنساش بقى تصلي على النبي وتكمل مذاكرتك بعزيمة!");
+            speak("طمني عليك؟ ما تنساش بقى تصلي على النبي وتكمل مذاكرتك بعزيمة!", "reminder");
     }, CFG.reminderMs);
   }
 
